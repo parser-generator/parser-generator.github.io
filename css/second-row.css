@@ -1,0 +1,82 @@
+#second-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+#disabled-start-field > button{
+    visibility: hidden;
+}
+
+#disabled-start-field > input{
+    height: 30px;
+    border-radius: 5px;
+    border: none;
+    box-shadow: none;
+}
+
+#startproduction-input{
+    background-color: white;
+}
+
+#startsymbol-input{
+    background-color: lightgrey;
+}
+
+.symbol-text{
+    font-family: monospace;
+    font-size: 17px;
+    white-space: nowrap;
+    width: 100px;
+}
+
+#input-container, #first-container, #follow-container{
+    margin: 15px;
+    padding-bottom: 5px;
+    width: calc(33.5% - 30px);
+    overflow: hidden;
+}
+
+#first-container, #follow-container{
+    visibility: collapse;
+}
+
+#first-form > *, #follow-form > *, #input-form > * {
+    margin-top: 10px;
+}
+
+.first-field > *, .follow-field > *, .input-field > *  {
+    margin-left: 10px;
+}
+
+.first-field > *:first-child, .follow-field > *:first-child, .input-field > *:first-child {
+    margin-left: 0;
+}
+
+.first-field > input, .follow-field > input, .input-field > input {
+    background-color: white;
+    padding-left: 10px;
+    width: calc(50% - 50px);
+    font-size: 15px;
+    height: 30px;
+    border-radius: 5px;
+    border: none;
+    box-shadow: #777 2px 2px 3px;
+}
+
+.input-field > input {
+    width: calc(50% - 60px);
+}
+
+.first-input, .follow-input{
+    margin-left: 0;
+}
+
+.first-output, .follow-output{
+    visibility: collapse;
+}
+
+#add-field-button{
+    margin-top: 10px;
+}
+
+

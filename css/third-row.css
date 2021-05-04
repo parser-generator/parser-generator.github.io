@@ -1,0 +1,53 @@
+#third-row{
+    visibility: collapse;
+    padding: 15px;
+}
+
+#third-row > *{
+    margin-top: 15px;
+}
+
+td {
+    padding: 5px;
+
+    border-width: 1px;
+    border-style: solid;
+    border-color: #444444;
+
+    overflow: scroll;
+    text-align: left;
+    white-space: nowrap;
+}
+
+#state-table-container, #parse-table-container{
+    overflow: scroll;
+}
+
+table {
+    width: 100%;
+    border-spacing: 0;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 15px;
+    border-color: #444444;
+
+    background-color: white;
+}
+
+#parse-table-container > table {
+    table-layout: fixed;
+}
+
+.thickBorderCell {
+    font-size: 17px;
+}
+
+.headerCell {
+    border-bottom-color: black;
+    border-bottom-width: 2px;
+}
+
+.leftCell {border-left-width: 0; width: 80px;}
+.rightCell {border-right-width: 0;}
+.topCell {border-top-width: 0;}
+.bottomCell {border-bottom-width: 0;}

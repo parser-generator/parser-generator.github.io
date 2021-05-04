@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Parser Generator</title>
+    <link rel="stylesheet" type="text/css" href="../css/first-row.css">
+    <link rel="stylesheet" type="text/css" href="../css/second-row.css">
+    <link rel="stylesheet" type="text/css" href="../css/third-row.css">
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+    <link rel="stylesheet" type="text/css" href="../css/popup.css">
+
+    <script type='text/javascript' src="../scripts/global.js"></script>
+    <script type='text/javascript' src="../scripts/parser/rules.js"></script>
+    <script type='text/javascript' src="../scripts/util.js"></script>
+    <script type='text/javascript' src="../scripts/gui/correction.js"></script>
+    <script type='text/javascript' src="../scripts/gui/fill.js"></script>
+    <script type='text/javascript' src="../scripts/gui/first-follow.js"></script>
+    <script type='text/javascript' src="../scripts/gui/grammar.js"></script>
+    <script type='text/javascript' src="../scripts/gui/gui.js"></script>
+    <script type='text/javascript' src="../scripts/gui/help.js"></script>
+    <script type='text/javascript' src="../scripts/gui/tables.js"></script>
+    <script type='text/javascript' src="../scripts/parser/first.js"></script>
+    <script type='text/javascript' src="../scripts/parser/follow.js"></script>
+    <script type='text/javascript' src="../scripts/parser/parser.js"></script>
+    <script type='text/javascript' src="../scripts/parser/sorting.js"></script>
+    <script type='text/javascript' src="../scripts/parser/state.js"></script>
+    <script type='text/javascript' src="../scripts/parser/symbols.js"></script>
+</head>
+<body>
+<div class="container">
+    <div>
+        <ul id="menu">
+            <li class="menubar"><a class="menubarentry" href="index.html">Startseite</a></li>
+            <li class="menubar"><a class="menubarentry" href="about.html">Kontakt</a></li>
+            <li class="menubar"><a class="menubarentry" href="info.html">Info</a></li>
+            <li class="menubar"><a class="menubarentry" onclick="popup()" >Hilfe</a></li>
+        </ul>
+    </div>
+
+    <div id="first-row">
+        <div class="card" id="description">
+            <div class="title">
+                <h3>Beschreibung</h3>
+            </div>
+            <div class="content">
+                <p>
+                    Diese Website soll als Hilfsmittel für das Lernen für Compilerbau dienen.
+                    Es können kontextfreie Grammatiken angegeben werden, dafür auch die First-/Followmengen,
+                    und die SLR(1)-Parsertabelle, welche korrigiert werden. Die Zusandstabelle wird automatisch berechnet.
+                </p>
+            </div>
+        </div>
+        <div class="card" id="manual">
+            <div class="title">
+                <h3>Anleitung</h3>
+            </div>
+            <div class="content">
+                <p>
+                    In der Grammatik müssen Symbole durch Leerzeichen getrennt werden.
+                    First und Followmengen können mit ",", ";" oder " " getrennt werden.
+                    Shift/Reduce wird mit "s"/"r" und der entsprechenden Zahl angegeben, die Endaktion mit "Fertig".
+                    Durch "|" können mehrere Regeln in einem Feld angegeben werden.
+                    "-" ist das leere Symbol.
+                </p>
+            </div>
+        </div>
+        <div class="card" id="samples">
+            <div class="title">
+                <h3>Beispiele</h3>
+            </div>
+            <div class="content">
+                <a onclick="fillInput(getSmallGrammar())" href="#0"> Kleine Grammatik</a>
+                <br>
+                <a onclick="fillInput(getMathGrammar())" href="#0">Mathematische Ausdrücke</a>
+                <br>
+                <a onclick="fillInput(getBracketGrammar())" href="#0">Richtig gesetzte Klammern</a>
+                <br>
+                <a onclick="fillInput(getDistinctNumberOfTSGrammar())" href="#0">Sprache mit ungleich vielen 'a' und 'b'</a>
+                <br>
+                <a onclick="fillInput(getFirstExamGrammar())" href="#0">Übungsgrammatik 1</a>
+                <br>
+                <a onclick="fillInput(getSecondExamGrammar())" href="#0">Übungsgrammatik 2</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="second-row">
+        <div id="input-container">
+            <div class="title">
+                <h3>Eingabe</h3>
+                <button class="wide-button" id="parse-grammar-button" onclick="parseGrammar()">
+                    <img src="../resources/caret-right-fill.svg"/>
+                </button>
+            </div>
+            <div class="popup">
+            <span class="popuptext" id="help-1" onclick="popup()">Gib eine kontextfreie Grammatik ein und drücke auf Start. Mit + werden Felder hinzugefügt und mit der Mülltonne gelöscht.</span>
+            </div>
+            <div class="popup">
+            <span class="popuptext" id="error" onclick="error('error')"></span>
+            </div>
+            <div id="input-form">
+                    <div id="disabled-start-field" class="input-field">
+                        <button class="button"></button
+                        ><input id="startsymbol-input" disabled type="text" class="nonterminal" value="S'"
+                        /><span>&#8594;</span
+                        ><input id="startproduction-input" type="text" class="production-rule" value="S"/>
+                    </div>
+                    <div class="input-field">
+                        <button class="button" onclick="deleteField(this)"
+                        ><img src="../resources/trashcan.png"
+                        /></button><input type="text" class="nonterminal" onchange="hideFirst()"
+                    /><span>&#8594;</span><input type="text" class="production-rule"  onchange="hideFirst()"/>
+                    </div>
+                </div>
+                <button class="wide-button" id="add-field-button" onclick="addField()">
+                    +
+                </button>
+        </div>
+
+        <div id="first-container">
+            <div class="title">
+                <h3>First</h3>
+                <button class="wide-button" onclick="correctAllFirsts()">
+                    <img src="../resources/caret-right-fill.svg"/>
+                </button>
+            </div>
+            <div class="popup">
+                <span class="popuptext" id="help-2" onclick="popup()">Gib die First-Mengen an und drücke auf einen Haken, für die Lösung von einem Feld oder Play für alle Felder.</span>
+            </div>
+            <div id="first-form"></div>
+        </div>
+
+        <div id="follow-container">
+            <div class="title">
+                <h3>Follow</h3>
+                <button class="wide-button" onclick="correctAllFollows()">
+                    <img src="../resources/caret-right-fill.svg"/>
+                </button>
+            </div>
+            <div class="popup">
+                <span class="popuptext" id="help-3" onclick="popup()">Gib die Follow-Mengen an und drücke auf einen Haken, für die Lösung von einem Feld oder Play für alle Felder.</span>
+            </div>
+            <div id="follow-form"></div>
+        </div>
+    </div>
+
+    <div id="third-row">
+        <div id="state-table-container"></div>
+        <button class="wide-button" onclick="correctParserTable(false)">
+            &check;
+        </button>
+        <button class="wide-button" onclick="correctParserTable(true)">
+            <img src="../resources/caret-right-fill.svg"/>
+        </button>
+        <div class="popup">
+            <span class="popuptext" id="help-4" onclick="popup()">Befülle die Parser Tabelle und drücke auf den Haken, um deine Fehler anzeigen zu lassen. Drücke auf Play für die richtige Lösung.</span>
+        </div>
+        <div id="parse-table-container"></div>
+    </div>
+</div>
+</body>
+</html>
