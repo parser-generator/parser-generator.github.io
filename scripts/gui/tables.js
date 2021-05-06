@@ -1,3 +1,7 @@
+/**
+ * showTables erzeugt und zeigt die Zustands- und Parsertabelle.
+ * Die Generierung erfolgt durch durch entsprechende Funktionsaufrufe von {@link createStateTable} und {@link createParseTable}.
+ */
 function showTables() {
     createStateTable();
     createParseTable();
@@ -7,6 +11,9 @@ function showTables() {
     step++;
 }
 
+/**
+ * createStateTable erstellt und befüllt die Zustandstabelle.
+ */
 function createStateTable(){
     let div = document.getElementById("state-table-container");
     let table = document.createElement("table");
@@ -60,6 +67,11 @@ function createStateTable(){
     div.appendChild(table);
 }
 
+/**
+ * Diese Funktion erstellt eine leere Parsertabelle.
+ * Nur die Headerzeilen und die erste Spalte sind befüllt.
+ * Die Zellen sind bearbeitbar und durch zwei Buttons über der Tabelle kann der Nutzer seine Eingabe korrigieren lassen.
+ */
 function createParseTable(){
     let div = document.getElementById("parse-table-container");
     let table = document.createElement("table");

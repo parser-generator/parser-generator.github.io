@@ -1,3 +1,7 @@
+/**
+ * getInput durchläuft die vom Nutzer eingegebene Grammatik und ermittelt daraus Produktionsregeln, Terminal und Nonterminalregeln.
+ * Diese werden in globalen Variablen abgespeichert.
+ */
 function getInput() {
     const container = document.getElementById("input-form");
     let nonTerminalInput = container.getElementsByClassName("nonterminal");
@@ -100,11 +104,12 @@ function getInput() {
 
         productionRules.append(processedNonTerminals[i], processedSymbols);
     }
-    console.log([terminals, nonTerminals, productionRules]);
-
-    return [terminals, nonTerminals, productionRules];
 }
 
+/**
+ * Der globalen Variable STARTPRODUCTION wird hier die Produktionsregel des Startsymbols zugewiesen.
+ * Zuvor werden einige Tests durchgeführt, um sicherzustellen, dass es sich um eine valide Regel handelt.
+ */
 function getStartproduction() {
     let input = document.getElementById("startproduction-input");
     let symbols = input.value.split(' ');

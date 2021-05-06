@@ -1,3 +1,8 @@
+/**
+ * Diese Funktion vergleicht die Nutzereingabe in allen First-Feldern mit den berechneten Firstmengen.
+ * Außerdem wird pro Eingabe ein neues Feld daneben erzeugt, in welchem die berechnete Firstmenge steht.
+ * Die Korrektur selbst wird in der Funktion {@link correctFirst} durchgeführt.
+ */
 function correctAllFirsts(){
     hideFollow();
     for (let i = 0; i < nonTerminals.symbols.length; i++) {
@@ -18,6 +23,11 @@ function correctAllFirsts(){
     showFollow();
 }
 
+/**
+ * @param {string} nonTerminalSymbol ist das Symbol, dessen Firstmenge mit der des Nutzers verglichen wird.
+ * correctFirst führt die Korrektur der vom Nutzer eingegebenen Firstmenge für ein spezifisches Symbol durch.
+ * Sind die Mengen gleich, wird das Feld der Nutzereingabe grün gefärbt, falls sie nicht gleich sind, rot.
+ */
 function correctFirst(nonTerminalSymbol){
     let input = document.getElementById("first-input-of-" + nonTerminalSymbol);
 
@@ -58,6 +68,11 @@ function correctFirst(nonTerminalSymbol){
     }
 }
 
+/**
+ * In dieser Funktion werden alle Felder korrigiert, in welchen der Nutzer Followmengen angeben soll.
+ * Korrektur heißt hierbei, dass für jedes Nonterminalsymbol {@link correctFollow} aufgerufen wird.
+ * Anschließend wird für jedes Eingabefeld ein weiteres erzeugt, in welchem die berechneten Followmengen stehen.
+ */
 function correctAllFollows(){
     hideThirdRow();
     for (let i = 0; i < nonTerminals.symbols.length; i++) {
@@ -78,6 +93,11 @@ function correctAllFollows(){
     showTables();
 }
 
+/**
+ * @param {string} symbol ist das Symbol, für welches diese Korrektur durchgeführt werden soll.
+ * In dieser Funktion wird das Eingabefeld für die Followmenge eines gegebenen Symbols mit der berechneten Followmenge des Symbols abgeglichen.
+ * Sind die beiden Felder gleich, so wird die Eingabe grün gefärbt, sonst rot.
+ */
 function correctFollow(symbol){
     let input = document.getElementById("follow-input-of-" + symbol);
 
@@ -112,6 +132,12 @@ function correctFollow(symbol){
     }
 }
 
+/**
+ * @param {boolean} fillMode gibt an, ob zuletzt noch jeder Zelleintrag mit der korrekten Läsung überschrieben werden soll.
+ * correctParserTable korrigiert die Parser-Tabelle. Dabei wird jeder Zelleintrag mit dem berechneten Eintrag abgeglcihen.
+ * Sind die Einträge gleich, so wird die Zelle grün gefärbt, sind sie nicht gleich, wird sie rot gefärbt.
+ * Im Fall, dass in einer Zelle kein Eintrag vorliegt und der Nutzer nichts eingegeben hat, so bleibt sie weiß.
+ */
 function correctParserTable(fillMode) {
     let tbody = document.getElementById("parse-table-body");
     for (let i = 0; i < tbody.rows.length; i++) {

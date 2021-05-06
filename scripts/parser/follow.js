@@ -1,10 +1,24 @@
+/**
+ * Klasse für das Speichern der generierten Follow-Mengen.
+ */
 class FollowSet {
+    /**
+     * @constructor
+     * Konstruktor für ein {@link FirstSet}.
+     * Initialisiert die Follow-Mengen für alle Terminal- und Nichtterminalsymbole.
+     */
     constructor() {
         for(let i = 0; i < nonTerminals.symbols.length; i++){
             this[nonTerminals.symbols[i]] = [];
         }
     }
 
+    /**
+     * @param {string} position identifiziert die Follow-Menge.
+     * @param {string} newSymbol ist das Symbol welches hinzugefügt werden soll.
+     * Funktion für das Hinzufügen eines Symbols zu einer Follow-Menge.
+     * Beachtet die Mengeneigenschaften (Ist als Vereinigung der First-Menge mit {newSymbol} umgesetzt).
+     */
     append(position, newSymbol){
         if(!this[position].includes(newSymbol)){
             this[position].push(newSymbol);
@@ -13,6 +27,12 @@ class FollowSet {
         return false;
     }
 
+    /**
+     * @param {string} correctSymbol identifiziert die Follow-Menge.
+     * @param {string[]} inputSet ist die Menge welche verglichen werden soll.
+     * Funktion für den Vergleich einer Menge von Symbolen zu einer Follow-Menge.
+     * Beachtet die Mengeneigenschaften (Ist als prüfung auf gegenseitige Inklusion umgesetzt).
+     */
     equals(correctSymbol, inputSet){
         let equal = true;
         for (let i = 0; i < this[correctSymbol].length; i++) {
@@ -33,10 +53,10 @@ class FollowSet {
     }
 }
 
-
-
 /**
- * This function generates the follow sets of all given symbols. It has to be called after first is calculated.
+ * Funktion für die Generierung der Follow-Mengen.
+ * Generiert die Follow-Mengen aller Nichtterminalsymbole.
+ * Prüft gleichzeitig ob ein Nichtterminalsymbol erreicht werden kann und gibt gegebenenfalls eine Warnung aus.
  */
 function generateFollow(){
     let changed = true;

@@ -1,9 +1,15 @@
 /**
- * This class stores the individual elements of a state (Collection).
- * nonTerminalSymbol is the symbol, that corresponds to the productionrule rule.
- * point contains the index of the element, which is proceeded by a point.
+ * Klasse für die Speicherung eines Elementes einer {@link Collection}.
  */
 class Element {
+    /**
+     * @constructor
+     * @param {String} nonTerminalSymbol der entsprechenden Produktionsregel.
+     * @param {String[]} rule der entsprechenden Produktionsregel.
+     * @param {Number} index der Produktionsregel in {@link productionRules}.
+     * @param {Number} point entspricht der Stelle der Punktes in einer Produktionsregel.
+     * Konstruktor für ein {@link Element}.
+     */
     constructor(nonTerminalSymbol, rule, index, point) {
         if(nonTerminalSymbol === undefined){
             throw "Invalid element";
@@ -28,9 +34,8 @@ class Element {
     }
 
     /**
-     *
-     * @param element is compared to the instance element.
-     * @return {boolean} whether the two elements are equal or not.
+     * @param {Element} element ist das Element welches verglichen werden soll.
+     * Funktion für den Vergleich zweier Elemente.
      */
     equals(element){
         let equals = false;
@@ -49,14 +54,16 @@ class Element {
     }
 
     /**
-     * @return {boolean} whether the point is after the last symbol of the rule.
+     * @return {Boolean} ob das Element beendet ist (der Punkt am Ende ist).
+     * Funtkion zur Bestimmung ob das Element beendet ist.
      */
     isNotFinished(){
         return (this.point < this.rule.length);
     }
 
     /**
-     * @return symbol after the point
+     * @return {String} Folgesymbol (Symbol nach dem Punkt)
+     * Funktion zur Bestimmung des Folgesymbols, wenn die Regel nicht beendet ist.
      */
     followingSymbol() {
         if (this.isNotFinished()) {
@@ -66,7 +73,8 @@ class Element {
 }
 
 /**
- * @returns an element converted to a string in the form of "NTS -> . x", "NTS -> x . y" or "NTS -> x ."
+ * @returns {String} Ausgabe eines Elementes in Form von:
+ * @example "NTS -> . x", "NTS -> x . y" or "NTS -> x ."
  */
 Element.prototype.toString = function elementToString() {
     let ret = this.nonTerminalSymbol + " &#8594; ";
@@ -88,7 +96,18 @@ Element.prototype.toString = function elementToString() {
     return ret;
 };
 
+/**
+ * Klasse für die Speicherung einer Kollektion einer {@link Collections}-Menge (Menge der Zustände).
+ * Beinhaltet die Sprünge und Reduktion einer Kollektion.
+ */
 class Collection {
+    /**
+     * @constructor
+     * @param {Element[]} elements der Kollektion.
+     * @param {Number} origin entspricht dem Zustand über dem die Kollektion erreicht wurde.
+     * @param {String} symbol entspricht dem Symbol über dem die Kollektion erreicht wurde.
+     * Konstruktor für eine {@link Collection}.
+     */
     constructor(elements, origin, symbol) {
         if(elements === undefined){
             elements = [];
@@ -103,6 +122,12 @@ class Collection {
         }
     }
 
+    /**
+     * @param {String} symbol entspricht dem Symbol über dem reduziert wird.
+     * @param {Number} productionIndex ist der index der Produktionsregel in {@link productionRules}.
+     * Funktion für das Hinzufügen der Reduktion zu einer Kollektion.
+     * Wirft einen Fehler aus wenn eine andere Reduktion bereits enthalten ist (Reduce-Reduce-Konflikte).
+     */
     addReduction(symbol, productionIndex){
         if(this.reduction.length === 0){
             this.reduction = [symbol, productionIndex];
@@ -111,6 +136,12 @@ class Collection {
         }
     }
 
+    /**
+     * @param {Number} collection entspricht dem Zustand zu dem gesprungen wird.
+     * @param {String} symbol über dem der Sprung stattfindet.
+     * Funktion für das Hinzufügen des Sprungs zu einer Kollektion.
+     * Wirft einen Fehler aus wenn ein anderer Sprung bereits enthalten ist (Shift-Shift-Konflikte).
+     */
     addJump(collection, symbol){
         if(this.jumps[symbol] === undefined){
             this.jumps[symbol] = collection;
@@ -121,6 +152,12 @@ class Collection {
         return false;
     }
 
+    /**
+     * @param {Element} element welches in {@link Collection} gesucht werden soll.
+     * @return {Boolean} ob das Element gefunden wurde.
+     * Funktion für die Suche eines Elements in den Elementen einer Kollektion.
+     * Nutzt die {@link equals} Funktion von {@link Element}
+     */
     has(element){
         let isIncluded = false;
         for (let i = 0; i < this.elements.length ; i++) {
@@ -132,6 +169,11 @@ class Collection {
         return isIncluded;
     }
 
+    /**
+     * @param {Element} element ist das Element welches hinzugefügt werden soll.
+     * Funktion für das Hinzufügen eines Elements zu einer Kollektion.
+     * Beachtet die Mengeneigenschaften (Ist als Vereinigung der Elemente der Kollektion mit {element} umgesetzt).
+     */
     append(element){
         if(!(this.has(element))){
             this.elements.push(element);
@@ -140,6 +182,11 @@ class Collection {
         return false;
     }
 
+    /**
+     * @param {Collection} collection ist die Kollektion die verglichen werden soll.
+     * Funktion für den Vergleich zweier Kollektionen.
+     * Beachtet die Mengeneigenschaften (Ist als prüfung auf gegenseitige Inklusion umgesetzt).
+     */
     equals(collection){
         for (let i = 0; i < this.elements.length; i++) {
             if(!collection.has(this.elements[i])){
@@ -147,19 +194,23 @@ class Collection {
             }
         }
         for (let i = 0; i < collection.length; i++) {
-            if(!this.elements.has(collection[i])){
+            if(!this.has(collection[i])){
                 return false;
             }
         }
         return true;
     }
 }
-
+/**
+ * @returns {String} Ausgabe einer Kollektion.
+ */
 Collection.prototype.toString = function collectionToString() {
     if(this.isStart) return "Start: " + "(" + this.elements.toString() + "); ";
     return "(" + this.origin + ", " + this.symbol + "): " + "(" + this.elements.toString() + "); ";
 };
-
+/**
+ * Klasse für die Speicherung der Zustände.
+ */
 class Collections {
     constructor(collections) {
         if(collections === undefined){
@@ -168,6 +219,12 @@ class Collections {
         this.collections = collections;
     }
 
+    /**
+     * @param {Collection} collection welches in {@link Collections} gesucht werden soll.
+     * @return {Boolean} ob das Element gefunden wurde.
+     * Funktion für die Suche einer Kollektion in den bereits berechneten Zuständen.
+     * Nutzt die {@link equals} Funktion von {@link Collection}
+     */
     has(collection){
         let index = -1;
         for (let i = 0; i < this.collections.length ; i++) {
@@ -179,6 +236,11 @@ class Collections {
         return index;
     }
 
+    /**
+     * @param {Collection} collection ist die Kollektion die hinzugefügt werden soll.
+     * Funktion für das Hinzufügen einer Kollektion zu den Zuständen.
+     * Beachtet die Mengeneigenschaften (Ist als Vereinigung der Zustände mit {Kollektion} umgesetzt).
+     */
     append(collection){
         let index = this.has(collection);
 
@@ -189,6 +251,12 @@ class Collections {
         return index;
     }
 
+    /**
+     * @param {Collection} collection entspricht dem Zustand zu dem gesprungen wird.
+     * @param {Number} origin entspricht dem Zustand über dem die Kollektion erreicht wurde.
+     * @param {String} symbol über dem der Sprung stattfindet.
+     * Funktion für das Hinzufügen des Zustandes und gleichzeitig des Sprungs.
+     */
     addStateAndJump(collection, origin, symbol) {
         let prevCount = this.collections.length - 1;
         let index = this.append(collection);
@@ -203,11 +271,19 @@ class Collections {
         return changed;
     }
 }
-
+/**
+ * @returns {String} Ausgabe aller Zustände
+ */
 Collections.prototype.toString = function collectionsToString() {
     return "[" + this.collections.toString() + "]"
 };
 
+/**
+ * @param {Collection} collection dessen Hülle berechnet werden soll.
+ * @return {Collection} Hülle der Kollektion
+ * Hilfsfunktion für die Generierung der Zustandsmenge.
+ * Berechnet die Hülle einer Kollektion.
+ */
 function closure(collection) {
     log("                   Calculating (" + collection + ")-Closure");
     let changed = true;
@@ -243,11 +319,13 @@ function closure(collection) {
 }
 
 /**
- * 
- * @param collection
- * @param origin
- * @param symbol
- * @returns {*}
+ * /**
+ * @param {Collection} collection dessen Hülle berechnet werden soll.
+ * @param {Number} origin entspricht dem Zustand über dem die Kollektion erreicht wurde.
+ * @param {String} symbol über dem der Sprung stattfindet.
+ * @return {Collection} Sprung der Kollektion
+ * Hilfsfunktion für die Generierung der Zustandsmenge.
+ * Berechnet den Sprung einer Kollektion über ein Symbol durch den Aufruf von {@link closure}.
  */
 function jump(collection, origin, symbol){
     log("                   Calculating (" + collection + " ; " + symbol + ")-Jump");
@@ -263,6 +341,12 @@ function jump(collection, origin, symbol){
     return closure(jumps);
 }
 
+/**
+ * Funktion für die Generierung der Zustandsmenge.
+ * Generiert die Zustandsmenge unter Verwendung der zwei Hilfsfunktionen:
+ * {@link jump}
+ * {@link closure}
+ */
 function generateStates() {
     log("Generating States:");
     let startingElement = new Element(STARTSYMBOL, STARTPRODUCTION, 0);

@@ -1,10 +1,12 @@
 /**
- * Class for productionrules of nonterminal symbosl
+ * Klasse für das Speichern der Produktionsregeln der Nichtterminalsymbole.
  */
 class Rules {
     /**
-     * Creates productions array and symbolToProduction map.
-     * @param symbols for which the productions and the map needs to be created. Can not be extended.
+     * @constructor
+     * @param {string[]} symbols die Initialisiert werden sollen.
+     * Konstruktor für ein {@link Rules}.
+     * Initialisiert die Produktionsregeln für alle {@link symbols}.
      */
     constructor(symbols) {
         this.symbolToProduction = {};
@@ -16,8 +18,9 @@ class Rules {
     }
 
     /**
-     * @param symbol of which the rules are needed
-     * @return rules of symbol
+     * @param {string} symbol dessen Produktionsregeln gesucht sind.
+     * @return {string[][]} Produktionsregeln des Symbols.
+     * Funktion für den vereinfachten Zugriff auf die Produktionsregeln.
      */
     of(symbol){
         if(this.symbolToProduction[symbol] === undefined) return [];
@@ -29,7 +32,9 @@ class Rules {
     }
 
     /**
-     * @return {boolean} whether production is a production of symbol
+     * @param {string} symbol dessen Produktionsregeln abgesucht werden.
+     * @param {string[]} production ist die Produktion die gesucht werden soll.
+     * Funktion für die Suche einer Produktion in den Produktionsregeln eines Symbols.
      */
     symbolHasProduction(symbol, production){
         for (let i = 0; i < this.symbolToProduction[symbol].length ; i++) {
@@ -41,9 +46,10 @@ class Rules {
     }
 
     /**
-     * @param symbol with new production rule
-     * @param production is the new production rule
-     * @return {boolean} whether the rule was added (true) or already included (false)
+     * @param {string} symbol für die eine Produktion hinzugefügt werden soll.
+     * @param {string[]} production das hinzugefügt werden soll.
+     * Funktion für das Hinzufügen einer Produktion zu einem Symbol.
+     * Beachtet die Mengeneigenschaften (Ist als Vereinigung der Produktionen mit {produktion} umgesetzt).
      */
     append(symbol, production) {
         if(!this.symbolHasProduction(symbol, production)){

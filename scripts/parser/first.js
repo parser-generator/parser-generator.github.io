@@ -1,4 +1,12 @@
+/**
+ * Klasse für das Speichern der generierten First-Mengen.
+ */
 class FirstSet {
+    /**
+     * @constructor
+     * Konstruktor für ein {@link FirstSet}.
+     * Initialisiert die First-Mengen für alle Terminal- und Nichtterminalsymbole.
+     */
     constructor() {
         for(let i = 0; i < terminals.symbols.length; i++){
             this[terminals.symbols[i]] = [terminals.symbols[i]];
@@ -7,7 +15,12 @@ class FirstSet {
             this[nonTerminals.symbols[i]] = [];
         }
     }
-
+    /**
+     * @param {string} position identifiziert die First-Menge.
+     * @param {string} newSymbol ist das Symbol welches hinzugefügt werden soll.
+     * Funktion für das Hinzufügen eines Symbols zu einer First-Menge.
+     * Beachtet die Mengeneigenschaften (Ist als Vereinigung der First-Menge mit {newSymbol} umgesetzt).
+     */
     append(position, newSymbol){
         if(!this[position].includes(newSymbol)){
             this[position].push(newSymbol);
@@ -15,7 +28,12 @@ class FirstSet {
         }
         return false;
     }
-
+    /**
+     * @param {string} correctSymbol identifiziert die First-Menge.
+     * @param {string[]} inputSet ist die Menge welche verglichen werden soll.
+     * Funktion für den Vergleich einer Menge von Symbolen zu einer First-Menge.
+     * Beachtet die Mengeneigenschaften (Ist als prüfung auf gegenseitige Inklusion umgesetzt).
+     */
     equals(correctSymbol, inputSet){
         let equal = true;
         for (let i = 0; i < this[correctSymbol].length; i++) {
@@ -36,6 +54,10 @@ class FirstSet {
     }
 }
 
+/**
+ * Funktion für den Check der generierten First-Mengen.
+ * Prüft ob die First-Mengen undefiniert sind und gibt gegebenenfalls eine Warnung aus.
+ */
 function checkFirsts(){
     let undefinedSymbols = [];
     for (let i = 1; i < nonTerminals.symbols.length; i++) {
@@ -57,10 +79,8 @@ function checkFirsts(){
 }
 
 /**
- * @param terminals: Array of all terminal-symbols represented by uppercase letters
- * @param nonTerminalSymbols: Array of all nonterminal-symbols represented as uppercase letters
- * @param productionRules: Map of nonterminal-symbols (keys) to array of all production rules of this NT (value)
- * These production rules are stored as strings
+ * Funktion für die Generierung der First-Mengen.
+ * Generiert die First-Mengen pro Nichtterminalsymbol einzeln durch den Aufruf von {@link generateFirstOfNT}.
  */
 function generateFirsts() {
     let sortedNonTerminals = topologicalSorting();
@@ -86,9 +106,8 @@ function generateFirsts() {
 }
 
 /**
- * @param nonTerminal: nonterminal-symbol represented by uppercase letter
- * @param productionRules: Map of nonterminal-symbols (keys) to array of all production rules of this NT (value)
- * These production rules are stored as strings
+ * @param {string} nonTerminal für die die First-Menge berechnet werden soll.
+ * Berechnet die First-Menge eines Nichtterminalsymbols.
  */
 function generateFirstOfNT(nonTerminal) {
     let changed = false;

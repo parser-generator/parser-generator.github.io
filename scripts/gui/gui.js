@@ -1,3 +1,7 @@
+/**
+ * Bei Aufruf wird ein neues Feld zur Grammatik hinzugefügt.
+ * Der Nutzer kann dies durch Klicken auf den '+'-Button erreichen.
+ */
 function addField(){
     const container = document.getElementById("input-form");
 
@@ -26,13 +30,21 @@ function addField(){
     container.appendChild(inputField);
 }
 
+/**
+ * Diese Funktion löscht die Eingabezeile der Grammatik, in welcher sich der Button befindet, auf den geklickt wurde.
+ * Wegen der Veränderung der Grammatik müssen alle generierten Felder mit {@link hideFirst} entfernt werden.
+ * @param button
+ */
 function deleteField(button){
     hideFirst();
     let field = button.parentNode;
     field.parentElement.removeChild(field);
 }
 
-
+/**
+ * Durch Aufruf von {@link hideFirst} werden alle erzeugten Objekte mit einschließlich den First-Feldern von der GUI entfernt.
+ * Anschließend werden auch die Felder der Grammatik auf den ursprünglichen Zustand zurückgeführt.
+ */
 function hideAll() {
     hideFirst();
     document.getElementById("input-form").innerHTML = "<div id=\"input-form\">\n" +
@@ -51,6 +63,10 @@ function hideAll() {
         "                </div>";
 }
 
+/**
+ * Entfernt durch Aufruf von {@link hideFollow} alle erzeugten Objekte ab einschließlich den Follow-Feldern.
+ * Anschließend werden die First-Felder entfernt.
+ */
 function hideFirst() {
     hideFollow();
     document.getElementById("first-form").innerHTML = "";
@@ -71,6 +87,10 @@ function hideFirst() {
     step = 1;
 }
 
+/**
+ * Durch Aufruf von {@link hideThirdRow} werden die Tabellen von der GUI entfernt.
+ * Anschließend werden alle zu Follow korrespondierenden Felder entfernt.
+ */
 function hideFollow() {
     hideThirdRow();
     document.getElementById("follow-form").innerHTML = "";
@@ -82,6 +102,9 @@ function hideFollow() {
     step = 2;
 }
 
+/**
+ * Diese Funktion entfernt die erzeugten Tabellen von der GUI.
+ */
 function hideThirdRow() {
     document.getElementById("state-table-container").innerHTML = "";
     document.getElementById("parse-table-container").innerHTML = "";
@@ -93,6 +116,11 @@ function hideThirdRow() {
     step = 3;
 }
 
+/**
+ * Durch Aufruf von {@link hideAll} wird die gesamte GUI zurückgesetzt.
+ * Anschließend werden auch die globalen Variablen gelöscht.
+ * Die Seite ist dann im selben Zustand wie nach neu Laden.
+ */
 function resetAll(){
     hideAll();
     terminals = new Symbols();

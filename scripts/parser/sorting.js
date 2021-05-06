@@ -1,10 +1,7 @@
 /**
- *
- * @param nonTerminals: Array of all nonterminal-symbols represented by uppercase letters
- * @param productionRules: Map of nonterminal-symbols (keys) to array of all production rules of this NT (value)
- * These production rules are stored as strings
+ * Funktion für das Sortieren der Nichtterminalsymbole in einer günstigen Reihenfolge für die Berechnung in {@link generateFirsts}.
+ * Achtung: Ist keine vollständige Implementierung des Topologischen-Sortierens
  */
-
 function topologicalSorting(){
     var dependencies = {};
     //Initialize dependencies

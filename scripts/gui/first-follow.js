@@ -1,3 +1,7 @@
+/**
+ * Diese Funktion generiert Felder zu Nutzereingabe, in welchen der Nutzer die Firstmengen angeben kann.
+ * Außerdem werden Buttons zur Korrektur und Texte, welche die Nonterminalsymbole enthalten, erzeugt.
+ */
 function showFirst(){
     const container = document.getElementById("first-form");
     container.innerHTML = "";
@@ -22,6 +26,10 @@ function showFirst(){
     step++;
 }
 
+/**
+ * Diese Funktion generiert Felder zu Nutzereingabe, in welchen der Nutzer die Followmengen angeben kann.
+ * Außerdem werden Buttons zur Korrektur und Texte, welche die Nonterminalsymbole enthalten, erzeugt.
+ */
 function showFollow(){
     const container = document.getElementById("follow-form");
     container.innerHTML = "";

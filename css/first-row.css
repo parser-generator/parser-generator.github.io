@@ -1,4 +1,4 @@
-#first-row {
+#first-row , #about{
     height: 230px;
     display: flex;
     justify-content: space-between;

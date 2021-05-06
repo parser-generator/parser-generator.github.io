@@ -1,6 +1,6 @@
 /**
- * Checks whether str is nonterminal
- * @param symbol: to be checked
+ * Funktion zur Überprüfung eines Symbols, ob es sich um ein Nonterminalsymbol handelt.
+ * @param symbol
  * @returns boolean
  */
 function isNT(symbol) {

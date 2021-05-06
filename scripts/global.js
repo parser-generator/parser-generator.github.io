@@ -1,5 +1,7 @@
-/* Options: ALL = All; OBJECTS = Objects; NONE = None */
-let logging = "ALL";
+/**
+ *  Options: ALL = All; OBJECTS = Objects; NONE = None
+ */
+let logging = "NONE";
 
 
 let EMPTY = "-";
@@ -19,4 +21,4 @@ let step = 1;
 
 let errorColor = "#DE2B49";
 let warningColor = "#F0852D";
-let correctColor = "#72A267"
+let correctColor = "#72A267";

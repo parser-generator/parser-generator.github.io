@@ -55,11 +55,22 @@ body {
     width: 75%;
 }
 
-#about {
-    margin: 15px;
+#first-content-card, #second-content-card {
+    height: 160px;
+}
+
+#info {
     width: 50%;
 }
 
-#about > * {
+#info > * {
     line-height: 1.5;
+}
+
+#info-card {
+    height: 330px;
+}
+
+#info-card .title > *{
+    margin-top: 30px;
 }
