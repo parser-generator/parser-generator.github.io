@@ -140,27 +140,44 @@ function correctFollow(symbol){
  */
 function correctParserTable(fillMode) {
     let tbody = document.getElementById("parse-table-body");
+    let pseudoTerminals = new Symbols();
+    for (let i = 0; i < terminals.symbols.length; i++) {
+        if(terminals.symbols[i] !== EMPTY) pseudoTerminals.append(terminals.symbols[i]);
+    }
+    let allCorrect = true;
+
     for (let i = 0; i < tbody.rows.length; i++) {
         let row = tbody.rows[i];
-        for (let j = 0; j < terminals.symbols.length; j++) {
+
+        //Terminals
+        for (let j = 0; j < pseudoTerminals.symbols.length; j++) {
             row.cells[j + 1].style.backgroundColor = "white";
-            //terminals[j] + ":" + row.cells[j + 1].innerHTML
+            //Get Input
             let input = row.cells[j + 1].innerHTML;
 
-            let correct = states.collections[i].jumps[terminals.symbols[j]];
-            correct = (correct !== undefined)? "s" + correct : "";
-
-            if(states.collections[i].reduction.length !== 0) {
-                if (follow[states.collections[i].reduction[0]].includes(terminals.symbols[j])) {
-                    correct += "r" + states.collections[i].reduction[1];
+            //Get Output
+            let correct = "";
+            for (let k = 0; k < states.collections[i].jumps[pseudoTerminals.symbols[j]].length; k++) {
+                let currentJump = states.collections[i].jumps[pseudoTerminals.symbols[j]][k];
+                if(currentJump !== undefined){
+                    correct += "s" + currentJump;
+                }
+            }
+            for (let k = 0; k < states.collections[i].reductions[pseudoTerminals.symbols[j]].length; k++) {
+                let currentReduction = states.collections[i].reductions[pseudoTerminals.symbols[j]][k];
+                if(currentReduction !== undefined){
+                    correct += "r" + currentReduction;
                 }
             }
 
+            //Compare Input and Output
             if(correct === "" && input.replace(/[\s]/g, "") !== ""){
                 row.cells[j + 1].style.backgroundColor = errorColor;
+                allCorrect = false;
             } else if (correct !== ""){
                 if (input.replace(/[^sSrR1234567890]/g, "").toLowerCase() !== correct){
                     row.cells[j + 1].style.backgroundColor = errorColor;
+                    allCorrect = false;
                 } else {
                     row.cells[j + 1].style.backgroundColor = correctColor;
                 }
@@ -168,42 +185,71 @@ function correctParserTable(fillMode) {
             if(fillMode) row.cells[j + 1].innerHTML = correct;
         }
 
-        let input = row.cells[terminals.symbols.length + 1].innerHTML;
-        let correct = "";
-        if(states.collections[i].reduction.length !== 0) {
-            correct += (states.collections[i].reduction[1] === 0)? "Fertig" : "r" + states.collections[i].reduction[1];
-        }
-        if(correct === "" && input.replace(/[\s]/g, "") !== ""){
-            row.cells[terminals.symbols.length + 1].style.backgroundColor = errorColor;
-        } else if (correct !== ""){
-            if(correct === "Fertig" && input !== "" && input.replace(/[^1234567890]/g, "") === ""){
-                row.cells[terminals.symbols.length + 1].style.backgroundColor = correctColor;
-            }
-            else if (input.replace(/[^sSrR1234567890]/g, "").toLowerCase() !== correct){
-                row.cells[terminals.symbols.length + 1].style.backgroundColor = errorColor;
-            } else {
-                row.cells[terminals.symbols.length + 1].style.backgroundColor = correctColor;
-            }
-        }
-        if(fillMode) row.cells[terminals.symbols.length + 1].innerHTML = correct;
+        //END - Symbol
 
-        for (let j = 1; j < nonTerminals.symbols.length; j++) {
-            row.cells[terminals.symbols.length + j + 1].style.backgroundColor = "white";
-            //nonTerminals.symbols[j] + ":" + row.cells[terminals.symbols.length + j + 1].innerHTML
-            let input = row.cells[terminals.symbols.length + j + 1].innerHTML;
-            let correct = states.collections[i].jumps[nonTerminals.symbols[j]];
-            correct = (correct !== undefined)? correct.toString() : "";
-            if(correct === "" && input.replace(/[^\s]/g, "") !== ""){
-                row.cells[terminals.symbols.length + j + 1].style.backgroundColor = errorColor;
-            } else if (correct !== ""){
-                if (input.replace(/[^1234567890]/g, "") !== correct){
-                    row.cells[terminals.symbols.length + j + 1].style.backgroundColor = errorColor;
+        //Get Input
+        let input = row.cells[pseudoTerminals.symbols.length + 1].innerHTML;
+
+        //Get Output
+        let correct = "";
+        for (let k = 0; k < states.collections[i].reductions[END].length; k++) {
+            let currentReduction = states.collections[i].reductions[END][k];
+            if(currentReduction !== undefined){
+                if(currentReduction === 0) {
+                    correct += "Fertig";
                 } else {
-                    row.cells[terminals.symbols.length + j + 1].style.backgroundColor = correctColor;
+                    correct += "r" + currentReduction;
                 }
             }
-            if(fillMode) row.cells[terminals.symbols.length + j + 1].innerHTML = correct;
+        }
 
+        //Compare Input and Output
+        if(correct === "" && input.replace(/[\s]/g, "") !== ""){
+            row.cells[pseudoTerminals.symbols.length + 1].style.backgroundColor = errorColor;
+            allCorrect = false;
+        } else if (correct !== ""){
+            if(correct === "Fertig" && input !== "" && input.replace(/[^1234567890]/g, "") === ""){
+                row.cells[pseudoTerminals.symbols.length + 1].style.backgroundColor = correctColor;
+            }
+            else if (input.replace(/[^sSrR1234567890]/g, "").toLowerCase() !== correct){
+                row.cells[pseudoTerminals.symbols.length + 1].style.backgroundColor = errorColor;
+                allCorrect = false;
+            } else {
+                row.cells[pseudoTerminals.symbols.length + 1].style.backgroundColor = correctColor;
+            }
+        }
+        if(fillMode) row.cells[pseudoTerminals.symbols.length + 1].innerHTML = correct;
+
+        //Non-Terminals
+        for (let j = 1; j < nonTerminals.symbols.length; j++) {
+            row.cells[pseudoTerminals.symbols.length + j + 1].style.backgroundColor = "invisible";
+
+            //Get Input
+            let input = row.cells[pseudoTerminals.symbols.length + j + 1].innerHTML;
+
+            //Get Output
+            let correct = "";
+            for (let k = 0; k < states.collections[i].jumps[nonTerminals.symbols[j]].length; k++) {
+                let currentJump = states.collections[i].jumps[nonTerminals.symbols[j]][k];
+                if(currentJump !== undefined){
+                    correct += currentJump.toString();
+                }
+            }
+
+            //Compare Input and Output
+            if(correct === "" && input.replace(/[^\s]/g, "") !== ""){
+                row.cells[pseudoTerminals.symbols.length + j + 1].style.backgroundColor = errorColor;
+                allCorrect = false;
+            } else if (correct !== ""){
+                if (input.replace(/[^1234567890]/g, "") !== correct){
+                    row.cells[pseudoTerminals.symbols.length + j + 1].style.backgroundColor = errorColor;
+                    allCorrect = false;
+                } else {
+                    row.cells[pseudoTerminals.symbols.length + j + 1].style.backgroundColor = correctColor;
+                }
+            }
+            if(fillMode) row.cells[pseudoTerminals.symbols.length + j + 1].innerHTML = correct;
         }
     }
+    if(allCorrect) setTimeout(function (){feedback()},3000);
 }

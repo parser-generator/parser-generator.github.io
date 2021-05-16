@@ -2,13 +2,13 @@
  * onClick-Funktion für den geregelten Aufruf der Berechnungsfuntkionen.
  * Führt die Berechnung der Parser-Tabelle durch den Aufruf der folgenden Funktionen aus:
  * {@link getStartproduction} und {@link getInput} für die Eingabe-Verarbeitung.
- * {@link generateFirsts} und {@link generateFollow} für die First- und Follow-Berechnung.
- * {@link generateStates} für die Zustandsberechnung.
+ * {@link generateFirsts} für die First-Berechnung.
+ * {@link lrGenerateStates} für die Zustandsberechnung.
  * Färbt den Knopf rot bei Fehlern in der Berechnung oder in der Grammatik.
  */
-function parseGrammar() {
+function ParseLRGrammar() {
     hideFirst();
-    try {
+    // try {
         getStartproduction();
         getInput();
         log("Terminals: " , terminals.symbols);
@@ -25,9 +25,9 @@ function parseGrammar() {
         follow = new FollowSet();
         generateFollow();
 
-        generateStates();
-        generateReductions()
-    } catch (e) {
-          document.getElementById("parse-grammar-button").style.backgroundColor = errorColor;
-    }
+        generateLRStates();
+        generateLRReductions();
+    // } catch (e) {
+    //     document.getElementById("parse-grammar-button").style.backgroundColor = errorColor;
+    // }
 }

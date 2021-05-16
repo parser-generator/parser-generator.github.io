@@ -66,29 +66,29 @@ function generateFollow(){
         changed = false;
         log("Going through all production rules");
         for (let i = 0; i < nonTerminals.symbols.length; i++) {
-            log("   Going through production rules " + productionRules.of(nonTerminals.symbols[i]) + " of " + nonTerminals.symbols[i]);
+            log("   Going through production rules " , productionRules.of(nonTerminals.symbols[i]) , " of " , nonTerminals.symbols[i]);
             if(nonTerminals.symbols[i] === STARTSYMBOL){
-                log("   Start Symbol. Follow is $ " + nonTerminals.symbols[i]);
+                log("   Start Symbol. Follow is $ " , nonTerminals.symbols[i]);
                 if(follow.append(nonTerminals.symbols[i], "$")){
                     changed = true;
                     continue;
                 }
             }
             for (let j = 0; j < productionRules.of(nonTerminals.symbols[i]).length; j++) {
-                log("       Going through production rule " + productionRules.of(nonTerminals.symbols[i])[j] + " of " + nonTerminals.symbols[i]);
+                log("       Going through production rule " , productionRules.of(nonTerminals.symbols[i])[j] , " of " , nonTerminals.symbols[i]);
                     for (let k = 0; k < productionRules.of(nonTerminals.symbols[i])[j].length - 1; k++) {
-                        log("               Checking " + productionRules.of(nonTerminals.symbols[i])[j][k]);
+                        log("               Checking " , productionRules.of(nonTerminals.symbols[i])[j][k]);
                         if(!isNT(productionRules.of(nonTerminals.symbols[i])[j][k])) {
-                            log("               Checking " + productionRules.of(nonTerminals.symbols[i])[j][k]+ " is not NT");
+                            log("               Checking " , productionRules.of(nonTerminals.symbols[i])[j][k], " is not NT");
                             continue;
                         }
                         let firstSet = first[productionRules.of(nonTerminals.symbols[i])[j][k+1]];
-                        log("                   First of next symbol: " + firstSet);
+                        log("                   First of next symbol: " , firstSet);
                         for (let l = 0; l < firstSet.length; l++) {
                             if(follow.append(productionRules.of(nonTerminals.symbols[i])[j][k], firstSet[l])){
                                 changed = true;
                                 log("                       Changed was set to true because of first of next");
-                                log("                       " + firstSet[l] + " added to follow of " + productionRules.of(nonTerminals.symbols[i])[j][k]);
+                                log("                       " , firstSet[l] , " added to follow of " , productionRules.of(nonTerminals.symbols[i])[j][k]);
                                 log(follow[productionRules.of(nonTerminals.symbols[i])[j][k]]);
                             }
                         }
@@ -98,20 +98,20 @@ function generateFollow(){
                                 if(follow.append(productionRules.of(nonTerminals.symbols[i])[j][k], follow[productionRules.of(nonTerminals.symbols[i])[j][k+1]][l])){
                                     changed = true;
                                     log("                       Changed was set to true because of follow of next");
-                                    log("                       " + follow[productionRules.of(nonTerminals.symbols[i])[j][k+1]][l] + " added to follow of ");
+                                    log("                       " , follow[productionRules.of(nonTerminals.symbols[i])[j][k+1]][l] , " added to follow of ");
                                     log(follow[productionRules.of(nonTerminals.symbols[i])[j][k]]);
                                 }
                             }
 
                         }
                     }
-                log("           Checking last element " + productionRules.of(nonTerminals.symbols[i])[j][productionRules.of(nonTerminals.symbols[i])[j].length - 1]);
+                log("           Checking last element " , productionRules.of(nonTerminals.symbols[i])[j][productionRules.of(nonTerminals.symbols[i])[j].length - 1]);
                 for (let k = 0; k < follow[nonTerminals.symbols[i]].length; k++) {
                     if(!isNT(productionRules.of(nonTerminals.symbols[i])[j][productionRules.of(nonTerminals.symbols[i])[j].length - 1])) {
                         log("                   last element not nt");
                         continue;
                     }
-                    log("           Follow of non terminal " + nonTerminals.symbols[i] + " to be added: " + follow[nonTerminals.symbols[i]][k]);
+                    log("           Follow of non terminal " , nonTerminals.symbols[i] , " to be added: " , follow[nonTerminals.symbols[i]][k]);
                     if(follow.append(productionRules.of(nonTerminals.symbols[i])[j][productionRules.of(nonTerminals.symbols[i])[j].length - 1], follow[nonTerminals.symbols[i]][k])){
                         changed = true;
                         log("               Changed was set to true");
@@ -129,7 +129,7 @@ function generateFollow(){
 
     let defined = true;
     for (let i = 0; i < nonTerminals.symbols.length; i++) {
-        log("   Filtering rule " + follow[nonTerminals.symbols[i]] + " of " + nonTerminals.symbols);
+        log("   Filtering rule " , follow[nonTerminals.symbols[i]] , " of " , nonTerminals.symbols);
         if(nonTerminals.symbols[i] === EMPTY){
             delete follow[nonTerminals.symbols[i]];
         } else {
@@ -140,8 +140,8 @@ function generateFollow(){
                 }
             }
         }
-        log("         Result of filter: " + follow[nonTerminals.symbols[i]]);
-        log("         Checking if " + follow[nonTerminals.symbols[i]] + " is defined.");
+        log("         Result of filter: " , follow[nonTerminals.symbols[i]]);
+        log("         Checking if " , follow[nonTerminals.symbols[i]] , " is defined.");
         if(typeof follow[nonTerminals.symbols[i]][0] === "undefined"){
             log("               It is not defined.");
             let nts = document.getElementsByClassName("nonterminal");

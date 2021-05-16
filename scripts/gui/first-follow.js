@@ -31,25 +31,31 @@ function showFirst(){
  * Außerdem werden Buttons zur Korrektur und Texte, welche die Nonterminalsymbole enthalten, erzeugt.
  */
 function showFollow(){
-    const container = document.getElementById("follow-form");
-    container.innerHTML = "";
+    const container = document.getElementById("follow-container");
+    if(container !== null) {
 
-    for (let i = 0; i < nonTerminals.symbols.length; i++) {
-        if(nonTerminals.symbols[i] !== EMPTY && nonTerminals.symbols[i] !== STARTSYMBOL) {
-            const followField = document.createElement("div");
-            followField.classList.add("follow-field");
-            followField.id = "follow-field-of-" + nonTerminals.symbols[i];
+        let form = document.getElementById("follow-form");
+        form.innerHTML = "";
 
-            followField.innerHTML = "<text class=\"symbol-text\">" + nonTerminals.symbols[i] + "</text" +
-                "><br><input type=\"text\" id=\"follow-input-of-" + nonTerminals.symbols[i] + "\" class=\"follow-input\"" +
-                "/><button class=\"button\" onclick=\"correctFollow(\'" + nonTerminals.symbols[i] + "\')\">&check;</button" +
-                "><input disabled type=\"text\" id=\"follow-output-of-" + nonTerminals.symbols[i] + "\" class=\"follow-output\"/>";
+        for (let i = 0; i < nonTerminals.symbols.length; i++) {
+            if (nonTerminals.symbols[i] !== EMPTY && nonTerminals.symbols[i] !== STARTSYMBOL) {
+                const followField = document.createElement("div");
+                followField.classList.add("follow-field");
+                followField.id = "follow-field-of-" + nonTerminals.symbols[i];
 
-            container.appendChild(followField);
+                followField.innerHTML = "<text class=\"symbol-text\">" + nonTerminals.symbols[i] + "</text" +
+                    "><br><input type=\"text\" id=\"follow-input-of-" + nonTerminals.symbols[i] + "\" class=\"follow-input\"" +
+                    "/><button class=\"button\" onclick=\"correctFollow(\'" + nonTerminals.symbols[i] + "\')\">&check;</button" +
+                    "><input disabled type=\"text\" id=\"follow-output-of-" + nonTerminals.symbols[i] + "\" class=\"follow-output\"/>";
+
+                form.appendChild(followField);
+            }
         }
+        document.getElementById("follow-container").style.visibility = "visible";
+        let popup = document.getElementById("help-" + step);
+        popup.classList.remove("show");
+    } else {
+        showTables()
     }
-    document.getElementById("follow-container").style.visibility = "visible";
-    let popup = document.getElementById("help-" + step);
-    popup.classList.remove("show");
     step++;
 }

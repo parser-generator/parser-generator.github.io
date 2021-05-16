@@ -93,12 +93,15 @@ function hideFirst() {
  */
 function hideFollow() {
     hideThirdRow();
-    document.getElementById("follow-form").innerHTML = "";
-    document.getElementById("follow-container").style.visibility = "collapse";
 
-    let popup = document.getElementById("help-" + step);
-    popup.classList.remove("show");
+    let container = document.getElementById("follow-container");
+    if(container !== null) {
+        document.getElementById("follow-form").innerHTML = "";
+        container.style.visibility = "collapse";
 
+        let popup = document.getElementById("help-" + step);
+        popup.classList.remove("show");
+    }
     step = 2;
 }
 

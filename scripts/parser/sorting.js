@@ -4,6 +4,7 @@
  */
 function topologicalSorting(){
     var dependencies = {};
+    log("Topological Sorting")
     //Initialize dependencies
     for(let i = 0; i < nonTerminals.symbols.length; i++) {
         dependencies[nonTerminals.symbols[i]] = [];
@@ -11,13 +12,13 @@ function topologicalSorting(){
     //Iterate through NTs
     for(let i = 0; i < nonTerminals.symbols.length; i++){
         //Iterate through the according production rules
-        log(productionRules.of(nonTerminals.symbols[i]));
+        log("   Current Production: " , productionRules.of(nonTerminals.symbols[i]));
         for(let j = 0; j < productionRules.of(nonTerminals.symbols[i]).length; j++){
             //Iterate through the characters of the production
-            log("   "  + productionRules.of(nonTerminals.symbols[i])[j]);
+            log("   Current symbol: "  , productionRules.of(nonTerminals.symbols[i])[j]);
             for(let k = 0; k < productionRules.of(nonTerminals.symbols[i])[j].length; k++){
                 //Check if production contains NT
-                log("       " + productionRules.of(nonTerminals.symbols[i])[j] + "(" + productionRules.of(nonTerminals.symbols[i])[j].length + ")" + ": " + productionRules.of(nonTerminals.symbols[i])[j][k]);
+                log("   Check if production contains: " , productionRules.of(nonTerminals.symbols[i])[j][k]);
                 if(isNT(productionRules.of(nonTerminals.symbols[i])[j][k])){
                     //Add as dependency
                     if(!(nonTerminals.symbols[i] in dependencies)){
@@ -30,7 +31,7 @@ function topologicalSorting(){
             }
         }
     }
-    log(dependencies);
+    log( "  Found order: " , dependencies);
     let maxDependencies = 0;
     for(let i = 0; i < nonTerminals.symbols.length; i++) {
         if(maxDependencies < dependencies[nonTerminals.symbols[i]].length){

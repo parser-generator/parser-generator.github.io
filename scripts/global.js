@@ -1,10 +1,11 @@
 /**
- *  Options: ALL = All; OBJECTS = Objects; NONE = None
+ *  Optionen: ALL = Alle Log-Daten werden erfasst; OBJECTS = Nur Objekte, keine Nachrichten; NONE = Kein Logging findet statt.
  */
-let logging = "NONE";
+let logging = "OBJECTS";
 
 
 let EMPTY = "-";
+let END = "$";
 let STARTSYMBOL = "S\'";
 let STARTPRODUCTION = ["S"];
 
@@ -19,6 +20,10 @@ let states;
 
 let step = 1;
 
+function getPassword(){
+    return "00300030003700610030003000350035003000300037003200300030003600320030003000360031003000300036006400300030003200640030003000360032003000300036003900300030003700300030003000360065003000300036003100300030003300310030003000320064003000300037003700300030003600350030003000360036003000300036003300300030003600310030003000360036".decode()
+}
+
 let errorColor = "#DE2B49";
 let warningColor = "#F0852D";
-let correctColor = "#72A267";
+let correctColor = "#72A267"

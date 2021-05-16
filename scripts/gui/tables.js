@@ -75,6 +75,10 @@ function createStateTable(){
 function createParseTable(){
     let div = document.getElementById("parse-table-container");
     let table = document.createElement("table");
+    let pseudoTerminals = new Symbols();
+    for (let i = 0; i < terminals.symbols.length; i++) {
+        if(terminals.symbols[i] !== EMPTY) pseudoTerminals.append(terminals.symbols[i]);
+    }
 
     let firstTableHead = document.createElement("tr");
         let emptyCell = document.createElement("td");
@@ -84,7 +88,7 @@ function createParseTable(){
             emptyCell.classList.add("leftCell");
         let action = document.createElement("td");
             action.appendChild(document.createTextNode("Aktion"));
-            action.colSpan = terminals.symbols.length + 1;
+            action.colSpan = pseudoTerminals.symbols.length + 1;
             action.classList.add("thickBorderCell");
             action.classList.add("topCell");
         firstTableHead.appendChild(action);
@@ -103,9 +107,9 @@ function createParseTable(){
             state.classList.add("headerCell");
             state.classList.add("leftCell");
         secondTableHead.appendChild(state);
-        for (let i = 0; i < terminals.symbols.length; i++) {
+        for (let i = 0; i < pseudoTerminals.symbols.length; i++) {
             let nonTerminalCell = document.createElement("td");
-                nonTerminalCell.appendChild(document.createTextNode(terminals.symbols[i]));
+                nonTerminalCell.appendChild(document.createTextNode(pseudoTerminals.symbols[i]));
                 nonTerminalCell.classList.add("headerCell");
             secondTableHead.appendChild(nonTerminalCell);
         }
@@ -127,10 +131,10 @@ function createParseTable(){
         tableBody.id = "parse-table-body";
         for (let i = 0; i < states.collections.length; i++) {
             let tableRow = document.createElement("tr");
-                for (let j = 0; j <= terminals.symbols.length + nonTerminals.symbols.length; j++) {
+                for (let j = 0; j <= pseudoTerminals.symbols.length + nonTerminals.symbols.length; j++) {
                     let cell = document.createElement("td");
-                        if(j === 0 || j === terminals.symbols.length) cell.classList.add("thickBorderCell");
-                        if(j === terminals.symbols.length + nonTerminals.symbols.length) cell.classList.add("rightCell");
+                        if(j === 0 || j === pseudoTerminals.symbols.length) cell.classList.add("thickBorderCell");
+                        if(j === pseudoTerminals.symbols.length + nonTerminals.symbols.length) cell.classList.add("rightCell");
                         if(i === states.collections.length - 1) cell.classList.add("bottomCell");
                         if(j === 0){
                             cell.classList.add("leftCell");

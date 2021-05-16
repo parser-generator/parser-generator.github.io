@@ -16,6 +16,26 @@ body {
     background: #2F4858;
 }
 
+.header-container{
+    pointer-events: none;
+    width: 100%;
+    min-width: 1200px;
+    display: flex;
+    position: absolute;
+}
+
+.header {
+    display: block;
+    color: #fff;
+    text-align: center;
+    padding: 15px 15px;
+}
+
+.pusher{
+    width: calc(48%);
+    min-width:565px
+}
+
 .menubar {
     float: left;
 }

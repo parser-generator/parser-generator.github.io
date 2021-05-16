@@ -90,12 +90,12 @@ function generateFirsts() {
         log(i + ". iteration");
         changed = false;
         for(let i = 0; i < sortedNonTerminals.symbols.length; i++){
-            log("Next symbol: " + sortedNonTerminals.symbols[i]);
+            log("Next symbol: ", sortedNonTerminals.symbols[i]);
             if(generateFirstOfNT(sortedNonTerminals.symbols[i])){
                 changed = true;
-                log(sortedNonTerminals.symbols[i] + ":    Changes detected");
+                log("", sortedNonTerminals.symbols[i], ":    Changes detected");
             } else {
-                log(sortedNonTerminals.symbols[i] + ":    No changes detected");
+                log("", sortedNonTerminals.symbols[i], ":    No changes detected");
             }
         }
         if(changed) log("Another iteration needed because of changes");
@@ -111,53 +111,77 @@ function generateFirsts() {
  */
 function generateFirstOfNT(nonTerminal) {
     let changed = false;
-    log(nonTerminal + ":    Rules: " + productionRules.of(nonTerminal));
+    log("", nonTerminal , ":    Rules: " , productionRules.of(nonTerminal));
     for(let i = 0; i < productionRules.of(nonTerminal).length; i++){
-        log(nonTerminal + ":        Next Rule: " + productionRules.of(nonTerminal)[i]);
+        log("", nonTerminal , ":        Next Rule: " , productionRules.of(nonTerminal)[i]);
         if(productionRules.of(nonTerminal)[i] === EMPTY){
             if(first.append(nonTerminal, EMPTY)){
-                log(nonTerminal + ":            Adding EMPTY");
+                log("", nonTerminal , ":            Adding EMPTY");
                 changed = true;
             } else {
-                log(nonTerminal + ":            EMPTY already included");
+                log("",nonTerminal , ":            EMPTY already included");
             }
         } else {
-            log(nonTerminal + ":        Current First: " + first[nonTerminal]);
+            log("", nonTerminal , ":        Current First: " , first[nonTerminal]);
             for (let j = 0; j < productionRules.of(nonTerminal)[i].length; j++) {
-                log(nonTerminal + ":            Next symbol: " + productionRules.of(nonTerminal)[i][j]);
-                log(nonTerminal + ":            First of " + productionRules.of(nonTerminal)[i][j] + ": " + first[productionRules.of(nonTerminal)[i][j]]);
+                log("", nonTerminal , ":            Next symbol: " , productionRules.of(nonTerminal)[i][j]);
+                log( nonTerminal + ":            First of " , productionRules.of(nonTerminal)[i][j] , ": " , first[productionRules.of(nonTerminal)[i][j]]);
                 for (let k = 0; k < first[productionRules.of(nonTerminal)[i][j]].length; k++) {
                     if(!(first[productionRules.of(nonTerminal)[i][j]][k] === EMPTY)) {
                         if (first.append(nonTerminal, first[productionRules.of(nonTerminal)[i][j]][k])) {
-                            log(nonTerminal + ":                Adding: " + first[productionRules.of(nonTerminal)[i][j]][k]);
+                            log("", nonTerminal , ":                Adding: " , first[productionRules.of(nonTerminal)[i][j]][k]);
                             changed = true;
                         } else {
-                            log(nonTerminal + ":                " + first[productionRules.of(nonTerminal)[i][j]][k] + " already included");
+                            log(nonTerminal + ":                " , first[productionRules.of(nonTerminal)[i][j]][k] , " already included");
                         }
                     }
                 }
                 if (first[productionRules.of(nonTerminal)[i][j]].includes(EMPTY)) {
                     if ((j + 1) === productionRules.of(nonTerminal)[i].length) {
-                        log(nonTerminal + ":                First of last symbol contains EMPTY");
+                        log("", nonTerminal , ":                First of last symbol contains EMPTY");
                         if (first.append(nonTerminal, EMPTY)) {
-                            log(nonTerminal + ":                    Adding EMPTY");
+                            log("", nonTerminal , ":                    Adding EMPTY");
                             changed = true;
                         } else {
-                            log(nonTerminal + ":                    EMPTY already included");
+                            log("", nonTerminal , ":                    EMPTY already included");
                         }
                         break;
                     } else {
-                        log(nonTerminal + ":                First of current symbol contains EMPTY");
-                        log(nonTerminal + ":                    Continuing with next symbol");
+                        log("", nonTerminal , ":                First of current symbol contains EMPTY");
+                        log("", nonTerminal , ":                    Continuing with next symbol");
                     }
                 } else {
-                    log(nonTerminal + ":                First of current symbol contains no EMPTY");
-                    log(nonTerminal + ":                    Exiting current rule");
+                    log("", nonTerminal , ":                First of current symbol contains no EMPTY");
+                    log("", nonTerminal , ":                    Exiting current rule");
                     break;
                 }
             }
         }
-        if(changed) log(nonTerminal + ":        Updating First to: " + first[nonTerminal]);
+        if(changed) log("", nonTerminal , ":        Updating First to: " , first[nonTerminal]);
     }
     return changed;
+}
+
+/**
+ * @param {String[]} symbols
+ */
+function firstOf(symbols) {
+    var ret = [];
+    if(symbols.length !== 0) {
+        if (first[symbols[0]].includes(EMPTY)) {
+            for (let j = 0; j < first[symbols[0]].length; j++) {
+                if (first[symbols[0]][j] !== EMPTY) {
+                    ret.push(first[symbols[0]][j])
+                }
+            }
+            ret.push(firstOf(symbols.shift()))
+        } else {
+            for (let i = 0; i < first[symbols[0]].length; i++) {
+                ret.push(first[symbols[0]][i])
+            }
+        }
+    } else {
+        ret.push(EMPTY)
+    }
+    return ret
 }

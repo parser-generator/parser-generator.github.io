@@ -23,9 +23,9 @@
     <script type='text/javascript' src="../scripts/gui/tables.js"></script>
     <script type='text/javascript' src="../scripts/parser/first.js"></script>
     <script type='text/javascript' src="../scripts/parser/follow.js"></script>
-    <script type='text/javascript' src="../scripts/parser/parser.js"></script>
+    <script type='text/javascript' src="../scripts/parser/lr-parser.js"></script>
     <script type='text/javascript' src="../scripts/parser/sorting.js"></script>
-    <script type='text/javascript' src="../scripts/parser/state.js"></script>
+    <script type='text/javascript' src="../scripts/parser/lr-state.js"></script>
     <script type='text/javascript' src="../scripts/parser/symbols.js"></script>
 </head>
 <body>
@@ -101,7 +101,7 @@
 
     <div class="header-container">
         <div class="pusher"></div>
-        <h9 class="header">SLR(1)</h9>
+        <h9 class="header">LR(1)</h9>
     </div>
     <div>
         <ul id="menu">
@@ -113,6 +113,7 @@
             <li class="menubar"><a class="menubarentry" onclick="feedback()" >Feedback</a></li>
         </ul>
     </div>
+
     <div id="first-row">
         <div class="card">
             <div class="title">
@@ -122,7 +123,7 @@
                 <p>
                     Diese Website soll als Hilfsmittel für das Lernen für Compilerbau dienen.
                     Es können kontextfreie Grammatiken angegeben werden, dafür auch die First-/Followmengen,
-                    und die SLR(1)-Parsertabelle, welche korrigiert werden. Die Zusandstabelle wird automatisch berechnet.
+                    und die LR(1)-Parsertabelle, welche korrigiert werden. Die Zusandstabelle wird automatisch berechnet.
                 </p>
             </div>
         </div>
@@ -164,33 +165,33 @@
         <div id="input-container" class="second-row-container">
             <div class="title">
                 <h3>Eingabe</h3>
-                <button class="wide-button" id="parse-grammar-button" onclick="parseGrammar()">
+                <button class="wide-button" id="parse-grammar-button" onclick="ParseLRGrammar()">
                     <img src="../resources/caret-right-fill.svg"/>
                 </button>
             </div>
             <div class="popup">
-            <span class="popuptext" id="help-1" onclick="popup()">Gib eine kontextfreie Grammatik ein und drücke auf Start. Mit + werden Felder hinzugefügt und mit der Mülltonne gelöscht.</span>
+                <span class="popuptext" id="help-1" onclick="popup()">Gib eine kontextfreie Grammatik ein und drücke auf Start. Mit + werden Felder hinzugefügt und mit der Mülltonne gelöscht.</span>
             </div>
             <div class="popup">
-            <span class="popuptext" id="error" onclick="error('error')"></span>
+                <span class="popuptext" id="error" onclick="error('error')"></span>
             </div>
-            <div id="input-form" >
-                    <div id="disabled-start-field" class="input-field">
-                        <button class="button"></button
-                        ><input id="startsymbol-input" disabled type="text" class="nonterminal" value="S'"
-                        /><span>&#8594;</span
-                        ><input id="startproduction-input" type="text" class="production-rule" value="S"/>
-                    </div>
-                    <div class="input-field">
-                        <button class="button" onclick="deleteField(this)"
-                        ><img src="../resources/trashcan.png"
-                        /></button><input type="text" class="nonterminal" onchange="hideFirst()"
-                    /><span>&#8594;</span><input type="text" class="production-rule"  onchange="hideFirst()"/>
-                    </div>
+            <div id="input-form">
+                <div id="disabled-start-field" class="input-field">
+                    <button class="button"></button
+                    ><input id="startsymbol-input" disabled type="text" class="nonterminal" value="S'"
+                /><span>&#8594;</span
+                ><input id="startproduction-input" type="text" class="production-rule" value="S"/>
                 </div>
-                <button class="wide-button" id="add-field-button" onclick="addField()">
-                    +
-                </button>
+                <div class="input-field">
+                    <button class="button" onclick="deleteField(this)"
+                    ><img src="../resources/trashcan.png"
+                    /></button><input type="text" class="nonterminal" onchange="hideFirst()"
+                /><span>&#8594;</span><input type="text" class="production-rule"  onchange="hideFirst()"/>
+                </div>
+            </div>
+            <button class="wide-button" id="add-field-button" onclick="addField()">
+                +
+            </button>
         </div>
 
         <div id="first-container" class="second-row-container">
@@ -206,17 +207,7 @@
             <div id="first-form"></div>
         </div>
 
-        <div id="follow-container" class="second-row-container">
-            <div class="title">
-                <h3>Follow</h3>
-                <button class="wide-button" onclick="correctAllFollows()">
-                    <img src="../resources/caret-right-fill.svg"/>
-                </button>
-            </div>
-            <div class="popup">
-                <span class="popuptext" id="help-3" onclick="popup()">Gib die Follow-Mengen an und drücke auf einen Haken, für die Lösung von einem Feld oder Play für alle Felder.</span>
-            </div>
-            <div id="follow-form"></div>
+        <div class="second-row-container">
         </div>
     </div>
 

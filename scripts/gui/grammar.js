@@ -57,15 +57,22 @@ function getInput() {
                     processedProductionRules.push(EMPTY);
                 }
                 else {
-                    let symbols = rules[j].split(" ");
-                    for (let k = 0; k < symbols.length; k++) {
-                        if(symbols[k] === EMPTY){
-                            productionRulesInput[i].style.backgroundColor = errorColor;
-                            error("Leeres Symbol ist als Zeichen in Regel enthalten.", errorColor);
-                            throw "EMPTY is used as symbol in rule";
+                    if(rules[j].replace(/\s/g, "") !== EMPTY){
+                        let symbols = rules[j].split(" ");
+                        if(symbols.length > 1){
+                            for (let k = 0; k < symbols.length; k++) {
+                                if(symbols[k] === EMPTY){
+                                    productionRulesInput[i].style.backgroundColor = errorColor;
+                                    error("Leeres Symbol ist als Zeichen in Regel enthalten.", errorColor);
+                                    throw "EMPTY is used as symbol in rule";
+                                }
+                            }
                         }
+                        processedProductionRules.push(rules[j]);
                     }
-                    processedProductionRules.push(rules[j]);
+                    else {
+                        processedProductionRules.push(EMPTY)
+                    }
                 }
                 processedNonTerminals.push(nonTerminalInput[i].value.replace(/\s/g, ""))
             }

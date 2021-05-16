@@ -1,16 +1,17 @@
 /**
- * Klasse für die Speicherung eines Elementes einer {@link Collection}.
+ * Klasse für die Speicherung eines LRElementes einer {@link LRCollection}}.
  */
-class Element {
+class LRElement {
     /**
      * @constructor
      * @param {String} nonTerminalSymbol der entsprechenden Produktionsregel.
      * @param {String[]} rule der entsprechenden Produktionsregel.
      * @param {Number} index der Produktionsregel in {@link productionRules}.
      * @param {Number} point entspricht der Stelle der Punktes in einer Produktionsregel.
-     * Konstruktor für ein {@link Element}.
+     * @param {String[]} previews Vorschau Symbole
+     * Konstruktor für ein {@link LRElement}.
      */
-    constructor(nonTerminalSymbol, rule, index, point) {
+    constructor(nonTerminalSymbol, rule, index, point, previews) {
         if(nonTerminalSymbol === undefined){
             throw "Invalid element";
         }
@@ -23,18 +24,35 @@ class Element {
         if(point === undefined){
             point = 0;
         }
+        if(previews === undefined){
+            previews = [];
+        }
         if(point <= rule.length) {
             this.nonTerminalSymbol = nonTerminalSymbol;
             this.rule = rule;
             this.index = index;
             this.point = point;
+            this.previewSymbols = previews;
         } else {
             throw "Invalid element";
         }
     }
 
     /**
-     * @param {Element} element ist das Element welches verglichen werden soll.
+     * @param {String} symbol ist das Vorschausymbol welches hinzugefügt werden soll.
+     * Funktion für das Hinzufügen eines Vorschausymboles.
+     */
+    appendPreview(symbol){
+        if(this.previewSymbols.includes(symbol)){
+            return false;
+        } else {
+            this.previewSymbols.push(symbol);
+            return true;
+        }
+    }
+
+    /**
+     * @param {LRElement} element ist das Element welches verglichen werden soll.
      * Funktion für den Vergleich zweier Elemente.
      */
     equals(element){
@@ -45,6 +63,20 @@ class Element {
             equals = true;
             for (let i = 0; i < this.rule.length; i++) {
                 if(this.rule[i] !== element.rule[i]){
+                    equals = false;
+                    break;
+                }
+            }
+        }
+        if(equals){
+            for (let i = 0; i < element.previewSymbols.length; i++) {
+                if(!this.previewSymbols.includes(element.previewSymbols[i])){
+                    equals = false;
+                    break;
+                }
+            }
+            for (let i = 0; i < this.previewSymbols.length; i++) {
+                if(!element.previewSymbols.includes(this.previewSymbols[i])){
                     equals = false;
                     break;
                 }
@@ -70,14 +102,26 @@ class Element {
             return this.rule[this.point];
         }
     }
+
+    /**
+     * @return {String} Folgesymbol (Symbol nach dem Punkt)
+     * Funktion zur Bestimmung des Folgesymbols, wenn die Regel nicht beendet ist.
+     */
+    followingFollowingSymbol() {
+        if (this.point < this.rule.length - 1) {
+            return this.rule[this.point + 1];
+        } else if (this.point === this.rule.length - 1){
+            return END;
+        }
+    }
 }
 
 /**
  * @returns {String} Ausgabe eines Elementes in Form von:
  * @example "NTS -> . x", "NTS -> x . y" or "NTS -> x ."
  */
-Element.prototype.toString = function elementToString() {
-    let ret = this.nonTerminalSymbol + " &#8594; ";
+LRElement.prototype.toString = function elementToString() {
+    let ret = "[ " + this.nonTerminalSymbol + " &#8594; ";
     if(this.point === 0){
         ret += ". " + this.rule[0];
     } else {
@@ -93,19 +137,25 @@ Element.prototype.toString = function elementToString() {
     if(this.point === this.rule.length){
         ret += " .";
     }
+    ret += "; ";
+    for (let i = 0; i < this.previewSymbols.length - 1; i++) {
+        ret += this.previewSymbols[i] + " \| ";
+    }
+    ret += this.previewSymbols[this.previewSymbols.length - 1] + " ]";
     return ret;
 };
+
 /**
  * Klasse für die Speicherung einer Kollektion einer {@link Collections}-Menge (Menge der Zustände).
  * Beinhaltet die Sprünge und Reduktion einer Kollektion.
  */
-class Collection {
+class LRCollection {
     /**
      * @constructor
-     * @param {Element[]} elements der Kollektion.
+     * @param {LRElement[]} elements der Kollektion.
      * @param {Number} origin entspricht dem Zustand über dem die Kollektion erreicht wurde.
      * @param {String} symbol entspricht dem Symbol über dem die Kollektion erreicht wurde.
-     * Konstruktor für eine {@link Collection}.
+     * Konstruktor für eine {@link LRCollection}}.
      */
     constructor(elements, origin, symbol) {
         if(elements === undefined){
@@ -164,10 +214,10 @@ class Collection {
     }
 
     /**
-     * @param {Element} element welches in {@link Collection} gesucht werden soll.
+     * @param  {LRElement} element welches in {@link LRCollection}} gesucht werden soll.
      * @return {Boolean} ob das Element gefunden wurde.
      * Funktion für die Suche eines Elements in den Elementen einer Kollektion.
-     * Nutzt die {@link equals} Funktion von {@link Element}
+     * Nutzt die {@link equals} Funktion von {@link LRElement}
      */
     has(element){
         let isIncluded = false;
@@ -181,7 +231,7 @@ class Collection {
     }
 
     /**
-     * @param {Element} element ist das Element welches hinzugefügt werden soll.
+     * @param  {LRElement} element ist das Element welches hinzugefügt werden soll.
      * Funktion für das Hinzufügen eines Elements zu einer Kollektion.
      * Beachtet die Mengeneigenschaften (Ist als Vereinigung der Elemente der Kollektion mit {element} umgesetzt).
      */
@@ -194,7 +244,7 @@ class Collection {
     }
 
     /**
-     * @param {Collection} collection ist die Kollektion die verglichen werden soll.
+     * @param  {LRCollection} collection ist die Kollektion die verglichen werden soll.
      * Funktion für den Vergleich zweier Kollektionen.
      * Beachtet die Mengeneigenschaften (Ist als prüfung auf gegenseitige Inklusion umgesetzt).
      */
@@ -215,14 +265,14 @@ class Collection {
 /**
  * @returns {String} Ausgabe einer Kollektion.
  */
-Collection.prototype.toString = function collectionToString() {
+LRCollection.prototype.toString = function collectionToString() {
     if(this.isStart) return "Start: " + "(" + this.elements.toString() + "); ";
     return "(" + this.origin + ", " + this.symbol + "): " + "(" + this.elements.toString() + "); ";
 };
 /**
  * Klasse für die Speicherung der Zustände.
  */
-class Collections {
+class LRCollections {
     constructor(collections) {
         if(collections === undefined){
             collections = [];
@@ -231,10 +281,10 @@ class Collections {
     }
 
     /**
-     * @param {Collection} collection welches in {@link Collections} gesucht werden soll.
+     * @param  {LRCollection} collection welches in {@link Collections} gesucht werden soll.
      * @return {Boolean} ob das Element gefunden wurde.
      * Funktion für die Suche einer Kollektion in den bereits berechneten Zuständen.
-     * Nutzt die {@link equals} Funktion von {@link Collection}
+     * Nutzt die {@link equals} Funktion von {@link LRCollection}}
      */
     has(collection){
         let index = -1;
@@ -248,7 +298,7 @@ class Collections {
     }
 
     /**
-     * @param {Collection} collection ist die Kollektion die hinzugefügt werden soll.
+     * @param  {LRCollection} collection ist die Kollektion die hinzugefügt werden soll.
      * Funktion für das Hinzufügen einer Kollektion zu den Zuständen.
      * Beachtet die Mengeneigenschaften (Ist als Vereinigung der Zustände mit {Kollektion} umgesetzt).
      */
@@ -263,7 +313,7 @@ class Collections {
     }
 
     /**
-     * @param {Collection} collection entspricht dem Zustand zu dem gesprungen wird.
+     * @param  {LRCollection} collection entspricht dem Zustand zu dem gesprungen wird.
      * @param {Number} origin entspricht dem Zustand über dem die Kollektion erreicht wurde.
      * @param {String} symbol über dem der Sprung stattfindet.
      * Funktion für das Hinzufügen des Zustandes und gleichzeitig des Sprungs.
@@ -285,17 +335,17 @@ class Collections {
 /**
  * @returns {String} Ausgabe aller Zustände
  */
-Collections.prototype.toString = function collectionsToString() {
+LRCollections.prototype.toString = function collectionsToString() {
     return "[" + this.collections.toString() + "]"
 };
 
 /**
- * @param {Collection} collection dessen Hülle berechnet werden soll.
- * @return {Collection} Hülle der Kollektion
+ * @param  {LRCollection} collection dessen Hülle berechnet werden soll.
+ * @return  {LRCollection} Hülle der Kollektion
  * Hilfsfunktion für die Generierung der Zustandsmenge.
  * Berechnet die Hülle einer Kollektion.
  */
-function closure(collection) {
+function LRClosure(collection) {
     log("                   Calculating (" , collection , ")-Closure");
     let changed = true;
 
@@ -303,30 +353,58 @@ function closure(collection) {
 
     while (changed){
         changed = false;
-        log("                       " + itr + ". iteration");
+        log("                       " , itr , ". iteration");
         for (let i = 0; i < collection.elements.length; i++) {
-            let nextSymbol = collection.elements[i].followingSymbol();
             log("                           Current collection: " , collection.elements[i]);
+            let nextSymbol = collection.elements[i].followingSymbol();
             if (isNT(nextSymbol)) {
-                log("                               " + nextSymbol + " is nonTerminal");
-                for (let j = 0; j < productionRules.of(nextSymbol).length; j++) {
-                    if(productionRules.of(nextSymbol)[j][0] !== EMPTY){
-                        let element = new Element(nextSymbol, productionRules.of(nextSymbol)[j], productionRules.symbolToProduction[nextSymbol][j], 0);
-                        log("                               Current element: " , element);
-                        if (collection.append(element)) {
-                            log("                               Added current element to: " , collection);
-                            changed = true;
-                        } else {
-                            log("                               Element already contained in: " , collection);
+                log("                               " , nextSymbol , " is nonTerminal");
+                let restOfRule = [];
+                for (let j = collection.elements[i].point + 1; j < collection.elements[i].rule.length; j++) {
+                    restOfRule.push(collection.elements[i].rule[j])
+                }
+                let firstOfPrev = firstOf(restOfRule);
+                if(firstOfPrev.includes(EMPTY)) {
+                    for (let j = 0; j < firstOfPrev.length; j++) {
+                        if(firstOfPrev[j] === EMPTY){
+                            firstOfPrev.splice(i,1)
                         }
                     }
-
+                    for (let j = 0; j < collection.elements[i].previewSymbols.length; j++) {
+                        if(collection.elements[i].previewSymbols[j] === END){
+                            if (!firstOfPrev.includes(END)) {
+                                firstOfPrev.push(END);
+                            }
+                        } else {
+                            for (let k = 0; k < first[collection.elements[i].previewSymbols[j]].length; k++) {
+                                if (!firstOfPrev.includes(first[collection.elements[i].previewSymbols[j]][k])) {
+                                    firstOfPrev.push(first[collection.elements[i].previewSymbols[j]][k])
+                                }
+                            }
+                        }
+                    }
+                }
+                for (let j = 0; j < productionRules.of(nextSymbol).length; j++) {
+                    // let element;
+                    // if(collection.elements[i].followingFollowingSymbol() !== END) {
+                    let element = new LRElement(nextSymbol, productionRules.of(nextSymbol)[j], productionRules.symbolToProduction[nextSymbol][j], 0, firstOfPrev);
+                    log("                               Current element: " , element);
+                    // } else {
+                    //     element = new LRElement(nextSymbol, productionRules.of(nextSymbol)[j], productionRules.symbolToProduction[nextSymbol][j], 0, [END]);
+                    //     log("                               Current element: " , element);
+                    // }
+                    if (collection.append(element)) {
+                        log("                               Added current element to: " , collection);
+                        changed = true;
+                    } else {
+                        log("                               Element already contained in: " , collection);
+                    }
                 }
             } else {
-                log("                               " + nextSymbol + " is terminal");
+                log("                               " , nextSymbol , " is terminal");
             }
         }
-        if (changed) log ("                       Changes detected, current closure: " , collection)
+        if (changed) log ("                       Changes detected, current closure: " , collection);
         itr++;
     }
     return collection;
@@ -334,41 +412,41 @@ function closure(collection) {
 
 /**
  * /**
- * @param {Collection} collection dessen Hülle berechnet werden soll.
+ * @param  {LRCollection} collection dessen Hülle berechnet werden soll.
  * @param {Number} origin entspricht dem Zustand über dem die Kollektion erreicht wurde.
  * @param {String} symbol über dem der Sprung stattfindet.
- * @return {Collection} Sprung der Kollektion
+ * @return  {LRCollection} Sprung der Kollektion
  * Hilfsfunktion für die Generierung der Zustandsmenge.
- * Berechnet den Sprung einer Kollektion über ein Symbol durch den Aufruf von {@link closure}.
+ * Berechnet den Sprung einer Kollektion über ein Symbol durch den Aufruf von {@link LRClosure}.
  */
-function jump(collection, origin, symbol){
+function LRJump(collection, origin, symbol){
     log("                   Calculating (" , collection , " ; " + symbol + ")-Jump");
-    let jumps = new Collection([], origin, symbol);
+    let jumps = new LRCollection([], origin, symbol);
     for (let i = 0; i < collection.elements.length; i++) {
-            log("                       Current collection: " , collection.elements[i]);
-            if (collection.elements[i].followingSymbol() === symbol) {
-                log("                       Found symbol: " ,symbol , " after \'.\' in: " , collection.elements[i]);
-                let element = new Element(collection.elements[i].nonTerminalSymbol, collection.elements[i].rule, collection.elements[i].index, collection.elements[i].point + 1);
-                if (jumps.append(element)) log("                       Added: " , element);
-            }
+        log("                       Current collection: " , collection.elements[i]);
+        if (collection.elements[i].followingSymbol() === symbol) {
+            log("                       Found symbol: " , symbol , " after \'.\' in: " , collection.elements[i]);
+            let element = new LRElement(collection.elements[i].nonTerminalSymbol, collection.elements[i].rule, collection.elements[i].index, collection.elements[i].point + 1, collection.elements[i].previewSymbols);
+            if (jumps.append(element)) log("                       Added: " , element);
+        }
     }
-    return closure(jumps);
+    return LRClosure(jumps);
 }
 
 /**
  * Funktion für die Generierung der Zustandsmenge.
  * Generiert die Zustandsmenge unter Verwendung der zwei Hilfsfunktionen:
- * {@link jump}
- * {@link closure}
+ * {@link LRJump}
+ * {@link LRClosure}
  */
-function generateStates() {
+function generateLRStates() {
     log("Generating States:");
-    let startingElement = new Element(STARTSYMBOL, STARTPRODUCTION, 0);
-    let collection = new Collection([startingElement]);
-    closure(collection);
+    let startingElement = new LRElement(STARTSYMBOL, STARTPRODUCTION, 0, 0,[END]);
+    let collection = new LRCollection([startingElement]);
+    LRClosure(collection);
 
     log("   Initial Collection: ", collection);
-    states = new Collections([collection]);
+    states = new LRCollections([collection]);
     let changed = true;
 
     let itr = 1;
@@ -382,36 +460,34 @@ function generateStates() {
                 log("           Current element: " , states.collections[i].elements[j]);
                 if (states.collections[i].elements[j].isNotFinished()) {
                     let nextSymbol = states.collections[i].elements[j].followingSymbol();
-                    log("               Following Symbol: ", nextSymbol);
-                    if(nextSymbol !== EMPTY) {
-                        let collection = jump(states.collections[i], i, nextSymbol);
-                        log("               Returned Collection: " , collection);
-                        if(states.addStateAndJump(collection, i, nextSymbol)){
-                            log("               Appended Collection to states");
-                            changed = true;
-                        } else {
-                            log("               Collection already contained");
-                        }
+                    log("               Following Symbol: " , nextSymbol);
+                    let collection = LRJump(states.collections[i], i, nextSymbol);
+                    log("               Returned Collection: " , collection);
+                    if(states.addStateAndJump(collection, i, nextSymbol)){
+                        log("               Appended Collection to states");
+                        changed = true;
+                    } else {
+                        log("               Collection already contained");
                     }
-                    else {
-                        log("               Following Symbol is empty Symbol. Nothing to do.");
-                    }
+                } else {
+                    states.collections[i].addReduction(states.collections[i].elements[j].nonTerminalSymbol, states.collections[i].elements[j].index);
+                    log("               Element is finished");
                 }
             }
         }
         itr++;
     }
-    log("Final States: " , states);
+    log("Final States: ", states);
 }
 
-function generateReductions(){
+function generateLRReductions(){
     for (let i = 0; i < states.collections.length; i++) {
         log("       Current state: " , states.collections[i]);
         for (let j = 0; j < states.collections[i].elements.length; j++) {
             log("           Current element: " , states.collections[i].elements[j]);
             if (!states.collections[i].elements[j].isNotFinished()) {
-                for (let k = 0; k < follow[states.collections[i].elements[j].nonTerminalSymbol].length; k++) {
-                    states.collections[i].addReduction(states.collections[i].elements[j].index, follow[states.collections[i].elements[j].nonTerminalSymbol][k]);
+                for (let k = 0; k < states.collections[i].elements[j].previewSymbols.length; k++) {
+                    states.collections[i].addReduction(states.collections[i].elements[j].index, states.collections[i].elements[j].previewSymbols[k]);
                     log("               Element is finished");
                 }
             }
