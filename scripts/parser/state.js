@@ -58,6 +58,7 @@ class Element {
      * Funtkion zur Bestimmung ob das Element beendet ist.
      */
     isNotFinished(){
+        if(this.rule[0] === EMPTY) return false;
         return (this.point < this.rule.length);
     }
 
@@ -78,20 +79,23 @@ class Element {
  */
 Element.prototype.toString = function elementToString() {
     let ret = this.nonTerminalSymbol + " &#8594; ";
-    if(this.point === 0){
-        ret += ". " + this.rule[0];
-    } else {
-        ret += this.rule[0];
-    }
-    for (let i = 1; i < this.rule.length; i++) {
-        if(i === this.point){
-            ret += (" . " + this.rule[i]);
+    if(this.rule[0] === EMPTY) ret += ".";
+    else {
+        if(this.point === 0){
+            ret += ". " + this.rule[0];
         } else {
-            ret += (" " + this.rule[i]);
+            ret += this.rule[0];
         }
-    }
-    if(this.point === this.rule.length){
-        ret += " .";
+        for (let i = 1; i < this.rule.length; i++) {
+            if(i === this.point){
+                ret += (" . " + this.rule[i]);
+            } else {
+                ret += (" " + this.rule[i]);
+            }
+        }
+        if(this.point === this.rule.length){
+            ret += " .";
+        }
     }
     return ret;
 };
@@ -310,17 +314,14 @@ function closure(collection) {
             if (isNT(nextSymbol)) {
                 log("                               " + nextSymbol + " is nonTerminal");
                 for (let j = 0; j < productionRules.of(nextSymbol).length; j++) {
-                    if(productionRules.of(nextSymbol)[j][0] !== EMPTY){
-                        let element = new Element(nextSymbol, productionRules.of(nextSymbol)[j], productionRules.symbolToProduction[nextSymbol][j], 0);
-                        log("                               Current element: " , element);
-                        if (collection.append(element)) {
-                            log("                               Added current element to: " , collection);
-                            changed = true;
-                        } else {
-                            log("                               Element already contained in: " , collection);
-                        }
+                    let element = new Element(nextSymbol, productionRules.of(nextSymbol)[j], productionRules.symbolToProduction[nextSymbol][j], 0);
+                    log("                               Current element: " , element);
+                    if (collection.append(element)) {
+                        log("                               Added current element to: " , collection);
+                        changed = true;
+                    } else {
+                        log("                               Element already contained in: " , collection);
                     }
-
                 }
             } else {
                 log("                               " + nextSymbol + " is terminal");

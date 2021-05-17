@@ -23,7 +23,6 @@ function fillInput(productionRules){
  * Mit dieser Grammatik sind Wörter eine Folge runder und eckiger Klammern, welche syntaktisch korrekt angeordnet sind.
  */
 function getBracketGrammar() {
-    EMPTY = '-';
     return {"S'": ['S'], S: ['S S', '( S ) | ( )', '[ S ] | [ ]']}
 }
 
@@ -32,7 +31,6 @@ function getBracketGrammar() {
  * Wörter dieser Grammatik enthalten nur 'a' und 'b', allerdings immer ungleich viele.
  */
 function getDistinctNumberOfTSGrammar(){
-    EMPTY = '-';
     return{"S'": ['S'], S: ['T', 'U'], T: ['V a T', 'V a V', 'T a V'], U: ['V b U', 'V b V', 'U b V'], V: ['a V b V', 'b V a V', '-']}
 }
 
@@ -41,7 +39,6 @@ function getDistinctNumberOfTSGrammar(){
  * Diese Grammatik stellt mathematische Ausdrücke dar, welche durch '+', '*' und Klammern erzeugt werden können.
  */
 function getMathGrammar(){
-    EMPTY = '-';
     return {"S'": ['Expr'], Expr: ['Expr + Term', 'Term'], Term: ['Term * Faktor', 'Faktor'], Faktor: ['( Expr )', 'Konst']}
 }
 
@@ -50,7 +47,6 @@ function getMathGrammar(){
  * Eine kleine Grammatik, zum einfachen Übungen.
  */
 function getSmallGrammar(){
-    EMPTY = '-';
     return{"S'": ['S'], S: ['A + S | A'], A: ['a']}
 }
 
@@ -59,7 +55,6 @@ function getSmallGrammar(){
  * Eine Grammatik, wie sie in der Klausur vorkommen könnte.
  */
 function getFirstExamGrammar(){
-    EMPTY = '-';
     return{"S'": ['S'], S: ['a | ( L )'], L: ['S | L . S']}
 }
 
@@ -68,6 +63,5 @@ function getFirstExamGrammar(){
  * Eine Grammatik, wie sie in der Klausur vorkommen könnte.
  */
 function getSecondExamGrammar(){
-    EMPTY = '-';
     return{"S'": ['S'], S: ['N'], N: ['a', 'N b a']}
 }

@@ -90,6 +90,7 @@ class LRElement {
      * Funtkion zur Bestimmung ob das Element beendet ist.
      */
     isNotFinished(){
+        if(this.rule[0] === EMPTY) return false;
         return (this.point < this.rule.length);
     }
 
@@ -122,26 +123,30 @@ class LRElement {
  */
 LRElement.prototype.toString = function elementToString() {
     let ret = "[ " + this.nonTerminalSymbol + " &#8594; ";
-    if(this.point === 0){
-        ret += ". " + this.rule[0];
-    } else {
-        ret += this.rule[0];
-    }
-    for (let i = 1; i < this.rule.length; i++) {
-        if(i === this.point){
-            ret += (" . " + this.rule[i]);
+    if(this.rule[0] === EMPTY) ret += ".";
+    else {
+        if (this.point === 0) {
+            ret += ". " + this.rule[0];
         } else {
-            ret += (" " + this.rule[i]);
+            ret += this.rule[0];
+        }
+        for (let i = 1; i < this.rule.length; i++) {
+            if (i === this.point) {
+                ret += (" . " + this.rule[i]);
+            } else {
+                ret += (" " + this.rule[i]);
+            }
+        }
+        if (this.point === this.rule.length) {
+            ret += " .";
         }
     }
-    if(this.point === this.rule.length){
-        ret += " .";
-    }
-    ret += "; ";
+    ret += " ; ";
     for (let i = 0; i < this.previewSymbols.length - 1; i++) {
-        ret += this.previewSymbols[i] + " \| ";
+        ret += this.previewSymbols[i] + " | ";
     }
     ret += this.previewSymbols[this.previewSymbols.length - 1] + " ]";
+
     return ret;
 };
 
@@ -282,7 +287,7 @@ class LRCollections {
 
     /**
      * @param  {LRCollection} collection welches in {@link Collections} gesucht werden soll.
-     * @return {Boolean} ob das Element gefunden wurde.
+     * @return {Number} ob das Element gefunden wurde.
      * Funktion für die Suche einer Kollektion in den bereits berechneten Zuständen.
      * Nutzt die {@link equals} Funktion von {@link LRCollection}}
      */
@@ -385,14 +390,7 @@ function LRClosure(collection) {
                     }
                 }
                 for (let j = 0; j < productionRules.of(nextSymbol).length; j++) {
-                    // let element;
-                    // if(collection.elements[i].followingFollowingSymbol() !== END) {
                     let element = new LRElement(nextSymbol, productionRules.of(nextSymbol)[j], productionRules.symbolToProduction[nextSymbol][j], 0, firstOfPrev);
-                    log("                               Current element: " , element);
-                    // } else {
-                    //     element = new LRElement(nextSymbol, productionRules.of(nextSymbol)[j], productionRules.symbolToProduction[nextSymbol][j], 0, [END]);
-                    //     log("                               Current element: " , element);
-                    // }
                     if (collection.append(element)) {
                         log("                               Added current element to: " , collection);
                         changed = true;
@@ -469,9 +467,6 @@ function generateLRStates() {
                     } else {
                         log("               Collection already contained");
                     }
-                } else {
-                    states.collections[i].addReduction(states.collections[i].elements[j].nonTerminalSymbol, states.collections[i].elements[j].index);
-                    log("               Element is finished");
                 }
             }
         }

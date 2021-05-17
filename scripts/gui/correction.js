@@ -14,7 +14,7 @@ function correctAllFirsts(){
             let result = "";
             result += (first[nonTerminalSymbol].length !== 0)? first[nonTerminalSymbol][0] : "Ø";
             for (let i = 1; i < first[nonTerminalSymbol].length; i++) {
-                result += ", " + first[nonTerminalSymbol][i];
+                result += ", " + ((first[nonTerminalSymbol][i] !== EMPTY)? first[nonTerminalSymbol][i] : "ε");
             }
             output.value = result;
             output.style.visibility = "visible";
@@ -84,7 +84,7 @@ function correctAllFollows(){
             let result = "";
             result += (follow[symbol].length !== 0)? follow[symbol][0]: "Ø";
             for (let i = 1; i < follow[symbol].length; i++) {
-                result += ", " + follow[symbol][i];
+                result += ", " + ((follow[symbol][i] !== EMPTY)? follow[symbol][i] : "ε");
             }
             output.value = result;
             output.style.visibility = "visible";

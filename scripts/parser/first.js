@@ -166,7 +166,7 @@ function generateFirstOfNT(nonTerminal) {
  * @param {String[]} symbols
  */
 function firstOf(symbols) {
-    var ret = [];
+    let ret = [];
     if(symbols.length !== 0) {
         if (first[symbols[0]].includes(EMPTY)) {
             for (let j = 0; j < first[symbols[0]].length; j++) {
@@ -174,7 +174,14 @@ function firstOf(symbols) {
                     ret.push(first[symbols[0]][j])
                 }
             }
-            ret.push(firstOf(symbols.shift()))
+            let rest = [];
+            for (let i = 1; i < symbols.length; i++) {
+                rest.push(symbols[i]);
+            }
+            let firsts = firstOf(rest);
+            for (let i = 0; i < firsts.length; i++) {
+                ret.push(firsts[i])
+            }
         } else {
             for (let i = 0; i < first[symbols[0]].length; i++) {
                 ret.push(first[symbols[0]][i])
