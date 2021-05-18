@@ -39,23 +39,29 @@ class LRElement {
     }
 
     /**
-     * @param {String} symbol ist das Vorschausymbol welches hinzugefügt werden soll.
+     * @param {String[]} symbols ist das Vorschausymbol welches hinzugefügt werden soll.
      * Funktion für das Hinzufügen eines Vorschausymboles.
      */
-    appendPreview(symbol){
-        if(this.previewSymbols.includes(symbol)){
-            return false;
-        } else {
-            this.previewSymbols.push(symbol);
-            return true;
+    appendPreview(symbols){
+        let hasChanged = false;
+        for (let i = 0; i < symbols.length; i++) {
+            if(!(this.previewSymbols.includes(symbols[i]))){
+                this.previewSymbols.push(symbols[i]);
+                hasChanged = true;
+            }
         }
+        return hasChanged;
     }
 
     /**
      * @param {LRElement} element ist das Element welches verglichen werden soll.
+     * @param {Boolean} ignorePreview ist das Element welches verglichen werden soll.
      * Funktion für den Vergleich zweier Elemente.
      */
-    equals(element){
+    equals(element, ignorePreview){
+        if(ignorePreview === undefined){
+            ignorePreview = false;
+        }
         let equals = false;
         if(element.nonTerminalSymbol === this.nonTerminalSymbol
             && element.point === this.point
@@ -68,7 +74,7 @@ class LRElement {
                 }
             }
         }
-        if(equals){
+        if(!ignorePreview && equals){
             for (let i = 0; i < element.previewSymbols.length; i++) {
                 if(!this.previewSymbols.includes(element.previewSymbols[i])){
                     equals = false;
@@ -143,7 +149,9 @@ LRElement.prototype.toString = function elementToString() {
     }
     ret += " ; ";
     for (let i = 0; i < this.previewSymbols.length - 1; i++) {
-        ret += this.previewSymbols[i] + " | ";
+        if(this.previewSymbols[i] != EMPTY) {
+            ret += this.previewSymbols[i] + " | ";
+        }
     }
     ret += this.previewSymbols[this.previewSymbols.length - 1] + " ]";
 
@@ -220,19 +228,19 @@ class LRCollection {
 
     /**
      * @param  {LRElement} element welches in {@link LRCollection}} gesucht werden soll.
-     * @return {Boolean} ob das Element gefunden wurde.
+     * @return {Number} ob das Element gefunden wurde.
      * Funktion für die Suche eines Elements in den Elementen einer Kollektion.
      * Nutzt die {@link equals} Funktion von {@link LRElement}
      */
     has(element){
-        let isIncluded = false;
+        let index = -1;
         for (let i = 0; i < this.elements.length ; i++) {
-            if(element.equals(this.elements[i])){
-                isIncluded = true;
+            if(element.equals(this.elements[i], false)){
+                index = i;
                 break;
             }
         }
-        return isIncluded;
+        return index;
     }
 
     /**
@@ -241,11 +249,13 @@ class LRCollection {
      * Beachtet die Mengeneigenschaften (Ist als Vereinigung der Elemente der Kollektion mit {element} umgesetzt).
      */
     append(element){
-        if(!(this.has(element))){
-            this.elements.push(element);
-            return true;
+        for (let i = 0; i < this.elements.length ; i++) {
+            if(element.equals(this.elements[i], true)){
+                return this.elements[i].appendPreview(element.previewSymbols)
+            }
         }
-        return false;
+        this.elements.push(element);
+        return true;
     }
 
     /**
@@ -255,12 +265,12 @@ class LRCollection {
      */
     equals(collection){
         for (let i = 0; i < this.elements.length; i++) {
-            if(!collection.has(this.elements[i])){
+            if(collection.has(this.elements[i]) === -1){
                 return false;
             }
         }
-        for (let i = 0; i < collection.length; i++) {
-            if(!this.has(collection[i])){
+        for (let i = 0; i < collection.elements.length; i++) {
+            if(this.has(collection.elements[i]) === -1){
                 return false;
             }
         }
@@ -372,7 +382,7 @@ function LRClosure(collection) {
                 if(firstOfPrev.includes(EMPTY)) {
                     for (let j = 0; j < firstOfPrev.length; j++) {
                         if(firstOfPrev[j] === EMPTY){
-                            firstOfPrev.splice(i,1)
+                            firstOfPrev.splice(j,1)
                         }
                     }
                     for (let j = 0; j < collection.elements[i].previewSymbols.length; j++) {

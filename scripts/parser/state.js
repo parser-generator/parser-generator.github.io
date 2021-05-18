@@ -208,11 +208,11 @@ class Collection {
                 return false;
             }
         }
-        for (let i = 0; i < collection.length; i++) {
-            if(!this.has(collection[i])){
-                return false;
-            }
-        }
+        // for (let i = 0; i < collection.elements.length; i++) {
+        //     if(!this.has(collection[i])){
+        //         return false;
+        //     }
+        // }
         return true;
     }
 }

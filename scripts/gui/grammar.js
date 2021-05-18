@@ -9,6 +9,8 @@ function getInput() {
 
     nonTerminals = new Symbols();
     terminals = new Symbols();
+    terminals.append(EMPTY);
+
     let processedProductionRules = [];
     let processedNonTerminals = [];
 
